@@ -27,7 +27,7 @@ body {
 
 .hero-content p {
   font-size: 1.2rem;
-  opacity: 0.9;
+  color: white; /* Letras de abajo en color blanco */
 }
 
 /* Botón de catálogo con menú desplegable */
