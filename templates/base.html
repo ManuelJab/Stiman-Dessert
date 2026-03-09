@@ -127,7 +127,10 @@
       <img src="{% static 'img/logo.jpg' %}" alt="{{ project_name }} Logo" class="cupcake-icon">
       <span>{{ project_name }}</span>
     </div>
-    <nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">
+      <i class="bi bi-list"></i>
+    </button>
+    <nav id="mainNav">
       <div class="nav-links">
         <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Inicio</a>
         <a href="{% url 'catalogo_publico' %}" class="{% if request.resolver_match.url_name == 'catalogo_publico' %}active{% endif %}">Catálogo</a>
@@ -247,6 +250,41 @@
     Volver al inicio
   </a>
   {% block extra_js %}{% endblock %}
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mainNav = document.getElementById('mainNav');
+    
+    if (mobileMenuBtn && mainNav) {
+      mobileMenuBtn.addEventListener('click', () => {
+        mainNav.classList.toggle('active');
+        const icon = mobileMenuBtn.querySelector('i');
+        if (mainNav.classList.contains('active')) {
+          icon.classList.replace('bi-list', 'bi-x');
+        } else {
+          icon.classList.replace('bi-x', 'bi-list');
+        }
+      });
+    }
+
+    // User Dropdown
+    const userDropdownBtn = document.getElementById('userDropdownBtn');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+    
+    if (userDropdownBtn && userDropdownMenu) {
+      userDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdownMenu.classList.toggle('open');
+        userDropdownBtn.classList.toggle('active');
+      });
+      
+      document.addEventListener('click', () => {
+        userDropdownMenu.classList.remove('open');
+        userDropdownBtn.classList.remove('active');
+      });
+    }
+  </script>
+</body>
 
   <script>
     // User dropdown toggle

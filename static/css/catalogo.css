@@ -25,6 +25,16 @@ body {
   font-weight: bold;
 }
 
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  
+  .hero-catalogo {
+    padding: calc(2rem + var(--header-height)) 1rem 2rem;
+  }
+}
+
 .hero-content p {
   font-size: 1.2rem;
   color: white; /* Letras de abajo en color blanco */
