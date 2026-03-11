@@ -389,51 +389,95 @@ header nav {
     z-index: 999;
     overflow-y: auto;
     align-items: flex-start;
+    display: flex; /* Aseguramos que sea flex */
   }
 
   header nav.active {
     transform: translateX(0);
   }
 
-  .nav-links {
-    flex-direction: column;
-    width: 100%;
-    gap: 0.8rem;
-    align-items: flex-start;
-    justify-content: flex-start;
-    flex: none;
+  .nav-links, .nav-right {
+    display: contents; /* Permite que los hijos se comporten como hijos directos del nav flex */
   }
 
   .nav-links a {
     width: 100%;
     font-size: 1.1rem;
-    padding: 10px 0;
+    padding: 12px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .nav-right {
-    flex-direction: column;
-    width: 100%;
-    gap: 1rem;
-    margin-top: 1rem;
-    align-items: flex-start;
-    border-top: 2px solid rgba(255, 255, 255, 0.2);
-    padding-top: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    text-align: left;
+    order: 2; /* Los enlaces principales van en medio */
   }
 
   .cart-link {
-    width: auto;
+    width: 100%;
+    justify-content: center;
+    order: 3; /* El carrito al final de todo */
+    padding: 15px !important;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     margin-bottom: 0.5rem;
+    display: flex !important;
   }
 
-  .user-dropdown, .user-dropdown-btn {
+  .user-dropdown, .btn-login, .btn-signup {
     width: 100%;
+    order: 1; /* Botones de auth al principio */
   }
 
   .btn-login, .btn-signup {
-    width: 100%;
     text-align: center;
     justify-content: center;
+    margin-left: 0 !important;
+    padding: 12px !important;
+    margin-bottom: 0.5rem;
+    display: flex !important;
+  }
+
+  .user-dropdown-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+    justify-content: flex-start;
+    padding: 12px 20px;
+    border-radius: 12px 12px 0 0;
+    font-size: 1.1rem;
+    pointer-events: none; /* Desactivar clics en el botón de usuario en móvil para que el menú siempre esté visible */
+  }
+
+  .user-dropdown-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.1);
+    margin-top: 0;
+    width: 100%;
+    display: block !important;
+    border-radius: 0 0 12px 12px;
+    padding: 5px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+    margin-bottom: 1.5rem;
+  }
+
+  .dropdown-item {
+    color: white !important;
+    padding: 12px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-item i {
+    color: white !important;
+  }
+
+  .user-chevron {
+    display: none; /* No necesitamos el chevron si está siempre abierto */
   }
 }
 
