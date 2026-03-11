@@ -121,13 +121,14 @@ for data in PRODUCTOS_DATA:
         )
         
         # Asignar imagen si existe el archivo
-        if image_path.exists() and not producto.image:
+        if image_path.exists():
             with open(image_path, 'rb') as f:
                 producto.image.save(
                     image_path.name,
                     ContentFile(f.read()),
                     save=True
                 )
+            print(f"🖼️  Imagen actualizada para: {data['name']}")
         
         if created:
             print(f"✅ Creado: {data['name']}")

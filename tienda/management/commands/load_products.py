@@ -125,13 +125,14 @@ class Command(BaseCommand):
                 )
 
                 # Asignar imagen si existe el archivo
-                if image_path.exists() and not producto.image:
+                if image_path.exists():
                     with open(image_path, 'rb') as f:
                         producto.image.save(
                             image_path.name,
                             ContentFile(f.read()),
                             save=True
                         )
+                    self.stdout.write(self.style.SUCCESS(f'🖼️  Imagen actualizada para: {data["name"]}'))
 
                 if created:
                     self.stdout.write(self.style.SUCCESS(f'✅ Creado: {data["name"]}'))
