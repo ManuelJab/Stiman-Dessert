@@ -29,30 +29,36 @@ def inicio(request):
 
 def home(request):
 	"""Vista para la página de inicio que muestra los más vendidos y recomendados."""
-	# Importar SolicitudPedido localmente para evitar ciclos si es necesario, 
-	# aunque idealmente debería estar arriba si no hay ciclo.
+	# Importar SolicitudPedido localmente para evitar ciclos
 	from web.models import SolicitudPedido
-	
-	# 1. Más vendidos: Productos con mayor cantidad total en SolicitudPedidos
-	# Filtramos por status para contar solo pedidos reales si se desea, 
-	# pero por simplicidad contamos todos.
-	# Anotamos cada producto con la suma de 'quantity' de sus pedidos.
-	mas_vendidos = Producto.objects.filter(is_active=True).annotate(
-		total_sold=Sum('solicitudpedido__quantity')
-	).order_by('-total_sold')[:4]
-	
-	# 2. Recomendados: Productos marcados como is_special o simplemente aleatorios/nuevos
-	recomendados = Producto.objects.filter(is_active=True, is_special=True).order_by('-created_at')[:4]
-	
-	# Si no hay suficientes especiales, rellenar con los más recientes
-	if recomendados.count() < 4:
-		extras = Producto.objects.filter(is_active=True, is_special=False).order_by('-created_at')[:4 - recomendados.count()]
-		recomendados = list(recomendados) + list(extras)
-	
-	return render(request, 'index.html', {
-		'mas_vendidos': mas_vendidos,
-		'recomendados': recomendados
-	})
+	from django.db import connection
+
+	# Verificar si las tablas existen para evitar Error 500 antes de migrate
+	tables = connection.introspection.table_names()
+	if Producto._meta.db_table not in tables:
+		return render(request, 'index.html', {'mas_vendidos': [], 'recomendados': []})
+
+	try:
+		# 1. Más vendidos
+		mas_vendidos = Producto.objects.filter(is_active=True).annotate(
+			total_sold=Sum('solicitudpedido__quantity')
+		).order_by('-total_sold')[:4]
+		
+		# 2. Recomendados
+		recomendados = Producto.objects.filter(is_active=True, is_special=True).order_by('-created_at')[:4]
+		
+		# Si no hay suficientes especiales, rellenar con los más recientes
+		if recomendados.count() < 4:
+			extras = Producto.objects.filter(is_active=True, is_special=False).order_by('-created_at')[:4 - recomendados.count()]
+			recomendados = list(recomendados) + list(extras)
+		
+		return render(request, 'index.html', {
+			'mas_vendidos': mas_vendidos,
+			'recomendados': recomendados,
+		})
+	except Exception:
+		# En caso de cualquier otro error de DB, mostrar página básica
+		return render(request, 'index.html', {'mas_vendidos': [], 'recomendados': []})
 
 
 class ProductoForm(forms.ModelForm):
