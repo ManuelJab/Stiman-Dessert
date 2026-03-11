@@ -19,8 +19,11 @@
     .cart-link {
       margin-right: 10px !important;
     }
-    .user-dropdown-menu {
-      min-width: 200px !important;
+    .user-dropdown-menu.open {
+      display: block !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: translateY(0) !important;
     }
     .dropdown-logout {
       color: #dc3545 !important;
@@ -293,41 +296,24 @@
     }
 
     // User Dropdown
-    const userDropdownBtn = document.getElementById('userDropdownBtn');
-    const userDropdownMenu = document.getElementById('userDropdownMenu');
-    
-    if (userDropdownBtn && userDropdownMenu) {
-      userDropdownBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        userDropdownMenu.classList.toggle('open');
-        userDropdownBtn.classList.toggle('active');
-      });
+    (function() {
+      const userDropdownBtn = document.getElementById('userDropdownBtn');
+      const userDropdownMenu = document.getElementById('userDropdownMenu');
       
-      document.addEventListener('click', () => {
-        userDropdownMenu.classList.remove('open');
-        userDropdownBtn.classList.remove('active');
-      });
-    }
-  </script>
-</body>
-
-  <script>
-    // User dropdown toggle
-    (function () {
-      const btn = document.getElementById('userDropdownBtn');
-      const menu = document.getElementById('userDropdownMenu');
-      if (!btn || !menu) return;
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        menu.classList.toggle('open');
-        btn.classList.toggle('active');
-      });
-      document.addEventListener('click', function () {
-        menu.classList.remove('open');
-        btn.classList.remove('active');
-      });
+      if (userDropdownBtn && userDropdownMenu) {
+        userDropdownBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          console.log("Dropdown clicked"); // Debug
+          userDropdownMenu.classList.toggle('open');
+          userDropdownBtn.classList.toggle('active');
+        });
+        
+        document.addEventListener('click', () => {
+          userDropdownMenu.classList.remove('open');
+          userDropdownBtn.classList.remove('active');
+        });
+      }
     })();
   </script>
 </body>
-
 </html>
