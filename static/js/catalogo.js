@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Funcionalidad de filtrado
-  if (categoriaOptions.length && productosGrid.length) {
+  if (categoriaOptions.length) {
     categoriaOptions.forEach((option) => {
       option.addEventListener("click", () => {
         const filtro = option.dataset.filter
