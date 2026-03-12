@@ -952,15 +952,66 @@ body {
   margin-top: auto;
   display: flex;
   gap: 0.5rem;
+  align-items: stretch;
+  width: 100%;
+}
+
+.especial-body .qty-input {
+  width: 60px;
+  padding: 8px 4px;
+  border: 1px solid #ff4081;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #333;
+  background: #fff;
+  outline: none;
+}
+
+.especial-body .btn.btn--secondary {
+  flex: 1;
+  background: #fce4ec;
+  color: #e91e63;
+  border: 1px solid #ff4081;
+  padding: 8px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.especial-body .btn.btn--secondary:hover {
+  background: #ff4081;
+  color: white;
 }
 
 .card-fav-action {
-  margin-top: 4px;
+  margin-top: 8px;
 }
 
 .card-fav-action .btn-fav-link {
-  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed #ff4081;
+  border-radius: 8px;
+  color: #e91e63;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  background: white;
+}
+
+.card-fav-action .btn-fav-link:hover {
+  background: #fff0f3;
+  border-style: solid;
 }
 
 @media (max-width: 600px) {
