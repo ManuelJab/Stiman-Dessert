@@ -54,6 +54,15 @@ body {
   text-align: center;
 }
 
+@media (min-width: 769px) {
+  .catalogo-filtro-container {
+    margin: 1.5rem 0 2.5rem 0;
+    width: 280px;
+    max-width: none;
+    text-align: left;
+  }
+}
+
 @media (max-width: 768px) {
   .catalogo-filtro-container {
     margin: 1rem auto 1.5rem;
@@ -120,6 +129,15 @@ body {
   z-index: 1000;
   overflow: hidden;
   border: 2px solid rgba(255, 64, 129, 0.2);
+}
+
+@media (min-width: 769px) {
+  .categoria-dropdown {
+    position: relative;
+    top: auto;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
 }
 
 @media (max-width: 768px) {
