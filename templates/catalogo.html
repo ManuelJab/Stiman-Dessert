@@ -98,7 +98,7 @@
         <h3>{{ p.name }}</h3>
         <p class="descripcion">{{ p.description|default:'Delicioso postre artesanal.' }}</p>
         <p class="precio">${{ p.price }}</p>
-        {% if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser) %}
+        {% if request.user.is_staff or request.user.is_superuser %}
           <div style="margin-bottom:8px;">
             <a href="{% url 'producto_update' p.id %}?next={{ request.path }}" class="btn btn--secondary"><i class="bi bi-pencil-fill"></i> Editar</a>
           </div>
