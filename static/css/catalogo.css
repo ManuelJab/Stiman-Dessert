@@ -43,11 +43,19 @@ body {
 /* Botón de catálogo con menú desplegable */
 .catalogo-filtro-container {
   position: relative;
-  display: inline-block;
-  margin: 2rem auto;
-  width: 100%;
-  max-width: 300px;
-  text-align: center;
+  display: block;
+  margin: 2rem 0 1rem 1rem;
+  width: auto;
+  max-width: 280px;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .catalogo-filtro-container {
+    margin: 1rem 15px 1.5rem 15px;
+    max-width: calc(100% - 170px); /* Deja espacio para el botón de volver al inicio a la derecha */
+    z-index: 100;
+  }
 }
 
 .btn-catalogo-dropdown {
