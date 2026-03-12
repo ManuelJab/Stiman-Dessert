@@ -6,15 +6,77 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{{ project_name }}{% endblock %}</title>
   {% load static %}
-  <link rel="stylesheet" href="{% static 'css/stiman.css' %}?v=15">
+  <link rel="stylesheet" href="{% static 'css/stiman.css' %}?v=16">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
     /* Estilos de emergencia para forzar cambios que no se ven por caché */
+    @media (max-width: 992px) {
+      header {
+        display: flex !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        padding: 0 15px !important;
+      }
+      .mobile-menu-btn {
+        display: block !important;
+        order: 1 !important;
+        margin-right: 15px !important;
+      }
+      .logo {
+        order: 2 !important;
+        display: flex !important;
+        align-items: center !important;
+        flex: 1 !important;
+      }
+      nav#mainNav {
+        display: flex !important;
+        flex-direction: column !important;
+        order: 3 !important;
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease-in-out !important;
+      }
+      nav#mainNav.active {
+        transform: translateX(0) !important;
+      }
+      .nav-links {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        order: 2 !important; /* Enlaces de navegación abajo */
+      }
+      .nav-right {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        order: 1 !important; /* Botones de login/logout ARRIBA */
+        border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+        padding-bottom: 15px !important;
+        margin-bottom: 15px !important;
+      }
+      .user-dropdown, .btn-login, .btn-signup {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-bottom: 10px !important;
+      }
+      /* Forzar que el menú de usuario esté siempre visible en móvil si está logueado */
+      .user-dropdown-menu {
+        position: static !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        background: rgba(255,255,255,0.1) !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      .user-chevron {
+        display: none !important;
+      }
+    }
     .nav-right {
-      display: flex !important;
-      align-items: center !important;
-      gap: 25px !important;
+      display: flex;
+      align-items: center;
+      gap: 25px;
     }
     .cart-link {
       margin-right: 10px !important;
