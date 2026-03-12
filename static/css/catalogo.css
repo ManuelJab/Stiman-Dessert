@@ -785,9 +785,51 @@ body {
 .especiales-title {
   color: #e91e63;
   font-size: 1.6rem;
-  margin: 0 0 1rem 0;
+  margin: 0 0 1.5rem 0;
   font-weight: 700;
-  text-align: left;
+  text-align: center;
+}
+
+/* Categorías de Eventos */
+.evento-category {
+  margin-bottom: 2rem;
+  padding: 1.2rem 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 14px;
+  border-left: 4px solid #ff4081;
+  transition: all 0.3s ease;
+}
+
+.evento-category:hover {
+  box-shadow: 0 8px 24px rgba(233, 30, 99, 0.1);
+  transform: translateX(4px);
+}
+
+.evento-category:nth-child(2) { border-left-color: #ff4081; }  /* Cumpleaños - rosa */
+.evento-category:nth-child(3) { border-left-color: #e91e63; }  /* Bodas - rojo rosa */
+.evento-category:nth-child(4) { border-left-color: #f06292; }  /* Reuniones - rosa claro */
+.evento-category:nth-child(5) { border-left-color: #ec407a; }  /* Fechas - rosa medio */
+
+.evento-title {
+  color: #c2185b;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.evento-title i {
+  color: #ff4081;
+  font-size: 1.1rem;
+}
+
+.evento-desc {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 0 0 0.8rem 0;
+  font-weight: 400;
 }
 
 .especiales-list {

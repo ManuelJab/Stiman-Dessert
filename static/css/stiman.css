@@ -2239,3 +2239,213 @@ footer {
     font-size: 0.75rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   FLUTTER ANIMATIONS — Animaciones globales para todo el sitio
+   ═══════════════════════════════════════════════════════════ */
+
+/* Animación base: entrada con fade + slide desde abajo */
+@keyframes flutterIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Flotamiento sutil continuo */
+@keyframes flutterFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Pulso suave en badges */
+@keyframes flutterPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 6px 18px rgba(233, 30, 99, 0.18);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(233, 30, 99, 0.3);
+  }
+}
+
+/* Shimmer en botones */
+@keyframes flutterShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* ── Aplicar flutter a las cards (catálogo, home, favoritos) ── */
+.especial-card,
+.product-card,
+.producto,
+.producto-card,
+.creator-card,
+.cart-item,
+.empty-state {
+  opacity: 0;
+  animation: flutterIn 0.6s ease-out forwards;
+}
+
+/* Escalonar las animaciones para efecto cascada */
+.especial-card:nth-child(1), .product-card:nth-child(1), .producto:nth-child(1) { animation-delay: 0.05s; }
+.especial-card:nth-child(2), .product-card:nth-child(2), .producto:nth-child(2) { animation-delay: 0.1s; }
+.especial-card:nth-child(3), .product-card:nth-child(3), .producto:nth-child(3) { animation-delay: 0.15s; }
+.especial-card:nth-child(4), .product-card:nth-child(4), .producto:nth-child(4) { animation-delay: 0.2s; }
+.especial-card:nth-child(5), .product-card:nth-child(5), .producto:nth-child(5) { animation-delay: 0.25s; }
+.especial-card:nth-child(6), .product-card:nth-child(6), .producto:nth-child(6) { animation-delay: 0.3s; }
+.especial-card:nth-child(7), .product-card:nth-child(7), .producto:nth-child(7) { animation-delay: 0.35s; }
+.especial-card:nth-child(8), .product-card:nth-child(8), .producto:nth-child(8) { animation-delay: 0.4s; }
+.especial-card:nth-child(n+9), .product-card:nth-child(n+9), .producto:nth-child(n+9) { animation-delay: 0.45s; }
+
+/* ── Flotamiento sutil al hacer hover en cards ── */
+.especial-card:hover,
+.product-card:hover,
+.producto-card:hover,
+.creator-card:hover {
+  animation: flutterFloat 1.5s ease-in-out infinite;
+}
+
+/* ── Badges con pulso continuo ── */
+.badge-especial {
+  animation: flutterPulse 2.5s ease-in-out infinite;
+}
+
+/* ── Títulos de sección con flutter de entrada ── */
+.featured-products h2,
+.especiales-title,
+.creators-title,
+.hero-content h1,
+.hero-content p,
+.favoritos-title,
+.cart-title {
+  opacity: 0;
+  animation: flutterIn 0.7s ease-out 0.1s forwards;
+}
+
+/* ── Botones con efecto shimmer en hover ── */
+.btn--primary,
+.btn--secondary,
+.btn-catalogo-dropdown,
+.btn-recipe,
+.login-modal-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn--primary::after,
+.btn--secondary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transition: none;
+}
+
+.btn--primary:hover::after,
+.btn--secondary:hover::after {
+  animation: flutterShimmer 0.8s ease-in-out;
+}
+
+/* ── Secciones completas con entrada flutter ── */
+.featured-products,
+.especiales-section,
+.creators-section,
+.intro-strip,
+.catalogo-section,
+.favoritos-section,
+.cart-page {
+  opacity: 0;
+  animation: flutterIn 0.8s ease-out 0.15s forwards;
+}
+
+/* ── Hero catálogo con flutter ── */
+.hero-catalogo {
+  opacity: 0;
+  animation: flutterIn 0.6s ease-out forwards;
+}
+
+/* ── Filtro de catálogo con flutter ── */
+.catalogo-filtro-container {
+  opacity: 0;
+  animation: flutterIn 0.6s ease-out 0.2s forwards;
+}
+
+/* ── Iconos sociales del footer flutter hover ── */
+.social-links a:hover {
+  animation: flutterFloat 0.8s ease-in-out infinite;
+}
+
+/* ── Footer grid items con flutter ── */
+.footer-grid > div {
+  opacity: 0;
+  animation: flutterIn 0.6s ease-out forwards;
+}
+
+.footer-grid > div:nth-child(1) { animation-delay: 0.1s; }
+.footer-grid > div:nth-child(2) { animation-delay: 0.2s; }
+.footer-grid > div:nth-child(3) { animation-delay: 0.3s; }
+.footer-grid > div:nth-child(4) { animation-delay: 0.4s; }
+
+/* ── Imágenes de cards con zoom suave en hover ── */
+.especial-thumb img,
+.producto-thumb img,
+.product-card img {
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.especial-card:hover .especial-thumb img,
+.especial-card:hover .producto-thumb img,
+.product-card:hover img {
+  transform: scale(1.08);
+}
+
+/* ── Banner de postres (marquee) con animación ── */
+.banner-postres {
+  opacity: 0;
+  animation: flutterIn 0.5s ease-out 0.3s forwards;
+}
+
+/* ── Qty input flutter focus ── */
+.qty-input:focus {
+  border-color: #ff6ea6;
+  box-shadow: 0 0 0 3px rgba(255, 110, 166, 0.15);
+  transform: scale(1.05);
+  transition: all 0.25s ease;
+}
+
+/* ── Respetar preferencia de movimiento reducido ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
