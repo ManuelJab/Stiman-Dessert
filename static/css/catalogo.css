@@ -15,13 +15,13 @@ body {
   margin-top: calc(-1 * var(--header-height));
   background-color: #fce4ec; /* Rosado más bajito */
   color: #c2185b; /* Texto en un tono de rosa más oscuro para contraste */
-  padding: calc(4rem + var(--header-height)) 2rem 4rem;
+  padding: calc(2.5rem + var(--header-height)) 2rem 2rem; /* Size reduced */
   text-align: center;
 }
 
 .hero-content h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
   font-weight: bold;
 }
 
@@ -56,10 +56,11 @@ body {
 
 @media (min-width: 769px) {
   .catalogo-filtro-container {
-    margin: 1.5rem 0 2.5rem 0;
+    margin: -1.5rem 0 1.5rem 0; /* Pull it slightly up */
     width: 280px;
     max-width: none;
     text-align: left;
+    z-index: 1000;
   }
 }
 
@@ -133,10 +134,10 @@ body {
 
 @media (min-width: 769px) {
   .categoria-dropdown {
-    position: relative;
-    top: auto;
-    margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: calc(100% + 5px);
+    margin-top: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   }
 }
 
