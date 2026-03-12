@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Catálogo - {{ project_name }}{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/catalogo.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/catalogo.css' %}?v=4">
 {% endblock %}
 {% block content %}
 
@@ -101,9 +101,9 @@
 		</div>
 	</section>
 	{% endif %}
-	<div class="productos-grid container">
+	<div class="especiales-list container">
 		{% for p in productos %}
-		<div class="product-card producto"
+		<div class="especial-card producto"
 			data-categoria="{% if 'flan' in p.name|lower %}flanes{% elif p.category == 'galleta' %}galletas{% elif p.category == 'pudin' %}pudines{% else %}postres{% endif %}"
 			data-ingredients="{% if p.ingredients %}{{ p.ingredients }}{% endif %}"
 			data-product-name="{{ p.name }}" data-description="{{ p.description|default:'' }}" data-price="{{ p.price }}"
@@ -111,7 +111,7 @@
 			{% if p.is_special %}
 			<span class="badge-especial">Especial</span>
 			{% endif %}
-			<a class="producto-thumb" href="#" aria-label="{{ p.name }}">
+			<a class="especial-thumb" href="#" aria-label="{{ p.name }}">
 				{% if p.image %}
 					<img src="{{ p.image.url }}" alt="{{ p.name }}" loading="lazy">
 				{% else %}
@@ -132,30 +132,31 @@
 					{% endif %}
 				{% endif %}
 			</a>
-			<div class="card-body">
-				<h3 class="card-title">{{ p.name }}</h3>
-				<p class="card-price">${{ p.price }}</p>
-				<div class="card-actions">
-					{% if request.user.is_authenticated and not request.user.is_staff and not request.user.is_superuser %}
-						<form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:inline;">
-							{% csrf_token %}
-							<button type="submit" class="btn btn--primary">Agregar al Carrito</button>
-						</form>
-					{% elif request.user.is_authenticated and request.user.is_staff %}
-						<a href="{% url 'producto_update' p.id %}?next={{ request.path }}" class="btn btn--secondary">Editar producto</a>
-					{% elif request.user.is_authenticated and request.user.is_superuser %}
-						<a href="{% url 'producto_update' p.id %}?next={{ request.path }}" class="btn btn--secondary">Editar producto</a>
+			<div class="especial-body">
+				<h4 class="especial-title">{{ p.name }}</h4>
+				<p class="especial-price">${{ p.price }}</p>
+				{% if request.user.is_staff or request.user.is_superuser %}
+				<div style="margin-bottom: 4px;">
+					<a href="{% url 'producto_update' p.id %}?next={{ request.path }}" class="btn-admin-edit"
+						style="font-size: 0.8rem; padding: 4px 8px;">
+						<i class="bi bi-pencil-fill"></i> Editar
+					</a>
+				</div>
+				{% endif %}
+				<form action="{% url 'carrito_agregar' p.id %}" method="post" class="producto-actions">
+					{% csrf_token %}
+					<input type="number" name="qty" value="1" min="1" class="qty-input">
+					<button type="submit" class="btn btn--secondary">Agregar</button>
+				</form>
+				{% if not request.user.is_staff and not request.user.is_superuser %}
+				<div class="card-fav-action">
+					{% if favorites_ids and p.id|stringformat:"s" in favorites_ids %}
+						<a href="{% url 'favoritos_toggle' p.id %}" class="btn-fav-link">❌ Quitar</a>
 					{% else %}
-						<a href="{% url 'login' %}" class="btn btn--primary">Ingresar para comprar</a>
-					{% endif %}
-					{% if not request.user.is_staff and not request.user.is_superuser %}
-						{% if favorites_ids and p.id|stringformat:"s" in favorites_ids %}
-							<a href="{% url 'favoritos_toggle' p.id %}" class="btn-fav-link">❌ Quitar</a>
-						{% else %}
-							<a href="{% url 'favoritos_toggle' p.id %}" class="btn-fav-link">❤️ Favorito</a>
-						{% endif %}
+						<a href="{% url 'favoritos_toggle' p.id %}" class="btn-fav-link">❤️ Favorito</a>
 					{% endif %}
 				</div>
+				{% endif %}
 			</div>
 		</div>
 		{% empty %}

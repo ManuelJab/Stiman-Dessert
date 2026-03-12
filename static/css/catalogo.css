@@ -796,6 +796,34 @@ body {
   gap: 1rem;
 }
 
+/* Main catalog grid using especiales-list layout */
+.catalogo-section > .especiales-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 1100px) {
+  .catalogo-section > .especiales-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .catalogo-section > .especiales-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .catalogo-section > .especiales-list {
+    grid-template-columns: 1fr;
+  }
+}
+
 .especial-card {
   background: white;
   border-radius: 12px;
@@ -844,6 +872,14 @@ body {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+}
+
+.card-fav-action {
+  margin-top: 4px;
+}
+
+.card-fav-action .btn-fav-link {
+  font-size: 0.85rem;
 }
 
 @media (max-width: 600px) {

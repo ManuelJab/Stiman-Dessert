@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCatalogo = document.getElementById("btn-catalogo-dropdown")
   const dropdownMenu = document.getElementById("categoria-dropdown")
   const categoriaOptions = document.querySelectorAll(".categoria-option")
-  const productosGrid = document.querySelectorAll(".productos-grid .producto")
-  const productosGridContainer = document.querySelector(".productos-grid")
+  const productosGrid = document.querySelectorAll(".catalogo-section > .especiales-list .producto")
+  const productosGridContainer = document.querySelector(".catalogo-section > .especiales-list")
   const especialesSection = document.querySelector(".especiales-section")
 
   // Toggle del menú desplegable
