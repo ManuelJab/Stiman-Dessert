@@ -512,24 +512,35 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
 
-    // Insertar el modal dentro de la card
-    card.style.position = "relative";
-    card.appendChild(ingredientsModal);
+    const rect = card.getBoundingClientRect();
+    const modalWidth = 320;
+    let leftPos = rect.right + 15;
+    
+    // Si se sale de la pantalla por la derecha, mostrarlo por la izquierda
+    if (leftPos + modalWidth > window.innerWidth) {
+      leftPos = rect.left - modalWidth - 15;
+    }
+    
+    // Si aún así no cabe o es móvil, ponerlo centrado
+    if (leftPos < 0 || window.innerWidth <= 768) {
+      leftPos = (window.innerWidth - modalWidth) / 2;
+    }
 
-    // Ajustar estilos para que encaje perfectamente como un overlay (encima del contenido)
-    ingredientsModal.style.position = "absolute";
-    ingredientsModal.style.top = "0";
-    ingredientsModal.style.left = "0";
-    ingredientsModal.style.right = "0";
-    ingredientsModal.style.bottom = "0";
-    ingredientsModal.style.width = "100%";
-    ingredientsModal.style.height = "100%";
-    ingredientsModal.style.maxWidth = "none"; // Eliminar restricción de CSS
-    ingredientsModal.style.maxHeight = "none";
+    // Insertar el modal en el body
+    document.body.appendChild(ingredientsModal);
+
+    // Ajustar estilos para ventana flotante
+    ingredientsModal.style.position = "fixed";
+    ingredientsModal.style.top = Math.max(20, rect.top) + "px";
+    ingredientsModal.style.left = Math.max(10, leftPos) + "px";
+    ingredientsModal.style.right = "auto";
+    ingredientsModal.style.bottom = "auto";
+    ingredientsModal.style.width = modalWidth + "px";
+    ingredientsModal.style.height = "auto";
+    ingredientsModal.style.maxHeight = "90vh";
     ingredientsModal.style.overflowY = "auto";
     ingredientsModal.style.borderRadius = "16px";
-    ingredientsModal.style.zIndex = "10";
-    ingredientsModal.style.boxSizing = "border-box";
+    ingredientsModal.style.zIndex = "9999";
     ingredientsModal.style.visibility = "visible";
     ingredientsModal.style.margin = "0"; // Asegurar que no haya márgenes que lo descuadren
 
@@ -553,9 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Al salir, cancelamos el contador y ocultamos
     const handleLeave = () => {
       if (hoverTimer) clearTimeout(hoverTimer);
-      if (ingredientsModal.parentElement === card) {
-        hideIngredientsModal();
-      }
+      hideIngredientsModal();
     };
 
     card.addEventListener("mouseenter", handleEnter);

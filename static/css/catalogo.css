@@ -1581,28 +1581,29 @@ footer {
 
 #ingredients-modal {
   position: fixed;
-  background: rgba(0, 0, 0, 0.92);
-  color: #fff;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
+  background: linear-gradient(135deg, #fffbf0, #fff5e6);
+  color: #4a3b32;
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(233, 30, 99, 0.15);
+  border: 2px solid #ffbade;
   z-index: 3000;
   max-width: 340px;
   display: none;
-  overflow: hidden;
 }
 #ingredients-modal.show {
   display: block;
+  animation: slideDown 0.3s ease;
 }
 #ingredients-modal .ingredients-modal-title {
-  font-weight: 700;
-  color: #ff4081;
+  font-weight: 800;
+  color: #e91e63;
   margin-bottom: 6px;
+  font-size: 1.2rem;
 }
 #ingredients-modal .ingredients-modal-subtitle {
-  font-weight: 600;
-  color: #ff80ab;
+  font-weight: 700;
+  color: #ff4081;
   margin-top: 10px;
   margin-bottom: 6px;
 }
@@ -1615,6 +1616,7 @@ footer {
   position: relative;
   padding-left: 14px;
   margin-bottom: 6px;
+  font-weight: 500;
 }
 #ingredients-modal .ingredients-list li::before {
   content: '';
@@ -1622,7 +1624,7 @@ footer {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #ff80ab;
+  background: #ff4081;
   left: 0;
   top: 8px;
 }
