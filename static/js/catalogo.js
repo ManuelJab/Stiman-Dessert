@@ -482,9 +482,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalTitle = document.getElementById("ingredients-modal-title")
   const modalDesc = document.getElementById("ingredients-modal-desc")
   const modalList = document.getElementById("ingredients-modal-list")
-  let modalTimer = null
+  let hoverTimer = null
 
-  function showIngredientsModal(card) {
+  function showIngredientsInsideCard(card) {
     const raw = card.dataset.ingredients || ""
     const name = card.dataset.productName || ""
     const desc = card.dataset.description || ""
@@ -512,64 +512,52 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
 
-    // Posicionar modal al lado de la card
-    const rect = card.getBoundingClientRect()
-    const scrollTop = window.scrollY || document.documentElement.scrollTop
-    const scrollLeft = window.scrollX || document.documentElement.scrollLeft
-    const gap = 12
+    // Insertar el modal dentro de la card
+    card.style.position = "relative";
+    card.appendChild(ingredientsModal);
 
-    // Primero mostrar invisible para medir el modal
-    ingredientsModal.style.visibility = "hidden"
-    ingredientsModal.style.top = "0px"
-    ingredientsModal.style.left = "0px"
+    // Ajustar estilos para que encaje perfectamente abajo
+    ingredientsModal.style.position = "absolute";
+    ingredientsModal.style.top = "auto";
+    ingredientsModal.style.left = "0";
+    ingredientsModal.style.right = "0";
+    ingredientsModal.style.bottom = "0";
+    ingredientsModal.style.width = "100%";
+    ingredientsModal.style.maxWidth = "none"; // Eliminar restricción de CSS
+    ingredientsModal.style.maxHeight = "100%";
+    ingredientsModal.style.overflowY = "auto";
+    ingredientsModal.style.borderRadius = "0 0 16px 16px";
+    ingredientsModal.style.boxSizing = "border-box";
+    ingredientsModal.style.visibility = "visible";
+    ingredientsModal.style.margin = "0"; // Asegurar que no haya márgenes que lo descuadren
+
     ingredientsModal.classList.add("show")
-
-    const modalW = ingredientsModal.offsetWidth
-    const modalH = ingredientsModal.offsetHeight
-
-    // Intentar posicionar a la derecha de la card
-    let left = rect.right + scrollLeft + gap
-    let top = rect.top + scrollTop
-
-    // Si se sale por la derecha, posicionar a la izquierda
-    if (rect.right + gap + modalW > window.innerWidth) {
-      left = rect.left + scrollLeft - modalW - gap
-    }
-
-    // Si se sale por abajo, ajustar
-    if (rect.top + modalH > window.innerHeight) {
-      top = rect.bottom + scrollTop - modalH
-    }
-
-    // Asegurar que no se salga por arriba
-    if (top < scrollTop) {
-      top = scrollTop + 8
-    }
-
-    ingredientsModal.style.top = top + "px"
-    ingredientsModal.style.left = left + "px"
-    ingredientsModal.style.visibility = "visible"
-
-    // Auto-ocultar después de 3 segundos
-    if (modalTimer) clearTimeout(modalTimer)
-    modalTimer = setTimeout(() => {
-      ingredientsModal.classList.remove("show")
-      modalTimer = null
-    }, 3000)
   }
 
   function hideIngredientsModal() {
     ingredientsModal.classList.remove("show")
-    if (modalTimer) {
-      clearTimeout(modalTimer)
-      modalTimer = null
-    }
   }
 
   const cards = document.querySelectorAll(".product-card, .especial-card")
   cards.forEach(card => {
-    card.addEventListener("mouseenter", () => showIngredientsModal(card))
-    card.addEventListener("mouseleave", () => hideIngredientsModal())
+    // Al entrar (hover o tap en móvil), iniciamos el contador de 3 segundos
+    const handleEnter = () => {
+      if (hoverTimer) clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        showIngredientsInsideCard(card);
+      }, 3000); // 3 segundos
+    };
+
+    // Al salir, cancelamos el contador y ocultamos
+    const handleLeave = () => {
+      if (hoverTimer) clearTimeout(hoverTimer);
+      if (ingredientsModal.parentElement === card) {
+        hideIngredientsModal();
+      }
+    };
+
+    card.addEventListener("mouseenter", handleEnter);
+    card.addEventListener("mouseleave", handleLeave);
   })
 
 })
