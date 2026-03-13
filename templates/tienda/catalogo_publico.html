@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Catálogo - {{ project_name }}{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/catalogo.css' %}?v=6">
+<link rel="stylesheet" href="{% static 'css/catalogo.css' %}?v=7">
 {% endblock %}
 {% block content %}
 
@@ -11,6 +11,10 @@
 		<h1>Nuestro Catálogo de Postres</h1>
 		<p><i class="bi bi-circle-fill"></i> Descubre todos nuestros deliciosos postres artesanales <i class="bi bi-circle-fill"></i></p>
 	</div>
+	<!-- Link al menú en PDF, actualiza la ruta cuando tengas el archivo PDF -->
+	<a href="#" class="pdf-download-link" title="Descargar Menú">
+		Ver Menú Completo (PDF) <i class="bi bi-download"></i>
+	</a>
 </section>
 
 <section id="catalogo" class="catalogo-section">

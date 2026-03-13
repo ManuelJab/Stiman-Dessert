@@ -13,35 +13,105 @@ body {
 /* Hero Catálogo */
 .hero-catalogo {
   margin-top: calc(-1 * var(--header-height));
-  background-color: #fce4ec; /* Rosado más bajito */
-  color: #c2185b; /* Texto en un tono de rosa más oscuro para contraste */
-  padding: calc(2.5rem + var(--header-height)) 2rem 2rem; /* Size reduced */
+  background: 
+    linear-gradient(135deg, rgba(255, 192, 203, 0.8), rgba(255, 230, 235, 0.9), rgba(255, 192, 203, 0.8)),
+    url('../img/dessert_pattern.jpg') repeat center center;
+  background-size: cover, 400px;
+  color: #c2185b;
+  position: relative;
+  overflow: hidden;
+  padding: calc(3rem + var(--header-height)) 2rem 3rem; 
   text-align: center;
+  box-shadow: inset 0 0 20px rgba(255,64,129,0.15);
+  border-bottom: 4px solid #ff4081;
+}
+
+/* Pseudo-elemento para crear una "onda" sutil tipo wave si es posible, o luz brillante */
+.hero-catalogo::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -50%; width: 200%; height: 100%;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 60%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .hero-content h1 {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-size: 3rem;
+  margin-bottom: 0.8rem;
+  font-weight: 900;
+  color: #c2185b;
+  text-shadow: 2px 2px 0px #fff, -1px -1px 0px #fff, 1px -1px 0px #fff, -1px 1px 0px #fff, 0 4px 10px rgba(194,24,91,0.3);
+  letter-spacing: -0.5px;
+}
+
+.hero-content p {
+  font-size: 1.3rem;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(194,24,91,0.6);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-content p i.bi-circle-fill {
+  font-size: 0.6rem;
+  color: #fff;
+  opacity: 0.9;
+}
+
+.pdf-download-link {
+  position: absolute;
+  bottom: 15px;
+  right: 25px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  text-shadow: 0 1px 3px rgba(194,24,91,0.5);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 3;
+  transition: transform 0.3s ease;
+}
+
+.pdf-download-link:hover {
+  transform: translateY(-2px);
+  color: #fff;
 }
 
 @media (max-width: 768px) {
   .hero-content h1 {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
   
   .hero-catalogo {
     margin-top: calc(-1 * var(--header-height)) !important;
-    padding-top: calc(2rem + var(--header-height)) !important;
+    padding-top: calc(2.5rem + var(--header-height)) !important;
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-bottom: 2rem;
+    padding-bottom: 3.5rem;
   }
-}
 
-.hero-content p {
-  font-size: 1.2rem;
-  color: white; /* Letras de abajo en color blanco */
+  .pdf-download-link {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 10px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pdf-download-link:hover {
+    transform: translateX(50%) translateY(-2px);
+  }
 }
 
 /* Botón de catálogo con menú desplegable */
