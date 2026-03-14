@@ -10,68 +10,79 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
-    /* Mobile header layout */
-    @media (max-width: 992px) {
-      header {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding: 0 15px !important;
-      }
-      .logo {
-        order: 1 !important;
-        display: flex !important;
-        align-items: center !important;
-      }
-      .header-right-controls {
-        order: 2 !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 8px !important;
-      }
-      .mobile-menu-btn {
-        display: block !important;
-      }
-      nav#mainNav {
-        display: flex !important;
-        flex-direction: column !important;
-        order: 3 !important;
-        transform: translateX(-100%) !important;
-        transition: transform 0.3s ease-in-out !important;
-      }
-      nav#mainNav.active {
-        transform: translateX(0) !important;
-      }
-      .nav-links {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-      }
-      .nav-right {
-        display: flex !important;
-        flex-direction: column !important;
-        width: 100% !important;
-      }
+    /* ═══ Header layout fixes ═══ */
+
+    /* Desktop: logo left, nav center, cart+auth right */
+    header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
     }
-    /* Desktop: hide header-right-controls cart, show in nav */
+
+    .header-right-controls {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+    }
+
+    /* Cart always visible in header-right-controls */
+    .header-right-controls .cart-link {
+      position: relative !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border: none !important;
+      padding: 8px !important;
+      margin: 0 !important;
+    }
+
+    /* Desktop specifics */
     @media (min-width: 993px) {
-      .header-right-controls .cart-link {
-        display: none !important;
-      }
       .mobile-menu-btn {
         display: none !important;
       }
       .nav-user-info {
         display: none !important;
       }
+      .header-right-controls {
+        gap: 6px !important;
+      }
+      /* On desktop, nav-auth-actions should display inline */
+      .nav-auth-actions {
+        flex-direction: row !important;
+        width: auto !important;
+        gap: 8px !important;
+      }
+      .nav-action-btn {
+        width: auto !important;
+        padding: 6px 14px !important;
+        font-size: 0.85rem !important;
+        border-radius: 25px !important;
+      }
     }
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 25px;
-    }
-    .cart-link {
-      margin-right: 10px !important;
+
+    /* Mobile specifics */
+    @media (max-width: 992px) {
+      header {
+        padding: 0 15px !important;
+      }
+      .logo {
+        order: 1 !important;
+        flex: 1 !important;
+      }
+      .header-right-controls {
+        order: 2 !important;
+      }
+      .mobile-menu-btn {
+        display: block !important;
+      }
+      nav#mainNav {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease-in-out !important;
+      }
+      nav#mainNav.active {
+        transform: translateX(0) !important;
+      }
     }
   </style>
   {% block extra_css %}{% endblock %}
