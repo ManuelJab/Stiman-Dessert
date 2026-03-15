@@ -16,6 +16,8 @@
     align-items: center;
     color: #333;
     overflow: hidden;
+    margin-top: calc(-1 * var(--header-height));
+    padding-top: var(--header-height);
   }
 
   .video-background {
@@ -451,12 +453,12 @@
         <p style="margin:0 0 10px 0; color:#c2185b; font-weight:600;">${{ p.price }}</p>
         <span class="badge-especial"><i class="bi bi-fire"></i> Popular</span>
         {% if not request.user.is_staff and not request.user.is_superuser %}
-          <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:inline;">
+          <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+            <form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:flex;">
               {% csrf_token %}
-              <button class="btn btn--primary">Agregar al carrito</button>
+              <button class="btn btn--primary" style="flex:1; text-align:center;">Agregar al carrito</button>
             </form>
-            <a href="{% url 'favoritos_toggle' p.id %}" class="btn btn--secondary"><i
+            <a href="{% url 'favoritos_toggle' p.id %}" class="btn btn--secondary" style="display:flex; align-items:center; justify-content:center; text-decoration:none;"><i
                 class="bi bi-heart-fill"></i>
               Favorito</a>
           </div>
@@ -507,12 +509,12 @@
         <p style="margin:0 0 10px 0; color:#c2185b; font-weight:600;">${{ p.price }}</p>
         <span class="badge-especial"><i class="bi bi-star-fill"></i> Recomendado</span>
         {% if not request.user.is_staff and not request.user.is_superuser %}
-          <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:inline;">
+          <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+            <form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:flex;">
               {% csrf_token %}
-              <button class="btn btn--primary">Agregar al carrito</button>
+              <button class="btn btn--primary" style="flex:1; text-align:center;">Agregar al carrito</button>
             </form>
-            <a href="{% url 'favoritos_toggle' p.id %}" class="btn btn--secondary"><i
+            <a href="{% url 'favoritos_toggle' p.id %}" class="btn btn--secondary" style="display:flex; align-items:center; justify-content:center; text-decoration:none;"><i
                 class="bi bi-heart-fill"></i>
               Favorito</a>
           </div>

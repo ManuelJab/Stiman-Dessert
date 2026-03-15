@@ -42,12 +42,12 @@
     <div class="cart-total-bar">
       <div class="cart-total-amount">Total: $ {{ total }}</div>
       {% if not request.user.is_staff and not request.user.is_superuser %}
-      <div style="display:flex; gap:10px;">
-        <form action="{% url 'carrito_vaciar' %}" method="post">
+      <div style="display:flex; gap:10px; align-items:stretch;">
+        <form action="{% url 'carrito_vaciar' %}" method="post" style="flex:1; display:flex;">
           {% csrf_token %}
-          <button type="submit" class="btn-vaciar">Vaciar</button>
+          <button type="submit" class="btn-vaciar" style="flex:1;">Vaciar</button>
         </form>
-        <a href="{% url 'checkout' %}" class="btn-checkout">Proceder al pago</a>
+        <a href="{% url 'checkout' %}" class="btn-checkout" style="flex:1; display:flex; align-items:center; justify-content:center; text-align:center;">Proceder al pago</a>
       </div>
       {% endif %}
     </div>

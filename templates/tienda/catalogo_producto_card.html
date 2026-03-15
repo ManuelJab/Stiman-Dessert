@@ -41,16 +41,16 @@
 			</a>
 		</div>
 		{% endif %}
-		<div class="product-card-actions">
-			<form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:inline;">
-				{% csrf_token %}
-				<button class="btn btn--primary">Agregar al carrito</button>
-			</form>
-			{% if not request.user.is_staff and not request.user.is_superuser %}
-			<a href="{% url 'favoritos_toggle' p.id %}" class="btn btn--secondary">
-				<i class="bi bi-heart-fill"></i> Favorito
-			</a>
-			{% endif %}
-		</div>
+		<div class="product-card-actions" style="display:flex; flex-direction:column; gap:8px;">
+		<form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:flex;">
+			{% csrf_token %}
+			<button class="btn btn--primary" style="flex:1; text-align:center;">Agregar al carrito</button>
+		</form>
+		{% if not request.user.is_staff and not request.user.is_superuser %}
+		<a href="{% url 'favoritos_toggle' p.id %}" class="btn btn--secondary" style="display:flex; align-items:center; justify-content:center; text-decoration:none;">
+			<i class="bi bi-heart-fill"></i> Favorito
+		</a>
+		{% endif %}
+	</div>
 	</div>
 </div>
