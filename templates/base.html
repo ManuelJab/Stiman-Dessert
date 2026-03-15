@@ -466,7 +466,7 @@
         {% if request.user.is_authenticated %}
         <form action="{% url 'logout' %}" method="post" style="margin:0; display:inline;">
           {% csrf_token %}
-          <button type="submit" class="btn-logout-desktop"><i class="bi bi-box-arrow-right"></i> Salir</button>
+          <button type="submit" class="btn-logout-desktop"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
         </form>
         <span class="user-name-desktop"><i class="bi bi-person-circle"></i> {{ request.user.first_name|default:request.user.username }}</span>
         <div class="nav-auth-actions">
