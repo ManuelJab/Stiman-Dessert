@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %}Carrito{% endblock %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/catalogo.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'css/catalogo.css' %}?v=4">
 {% endblock %}
 {% block content %}
 <section class="cart-page">
@@ -24,16 +24,20 @@
           <div class="cart-item-price">Subtotal: $ {{ it.subtotal }}</div>
         </div>
         {% if not request.user.is_staff and not request.user.is_superuser %}
-          <div class="cart-controls" style="display:flex; gap:8px; align-items:stretch;">
-            <form action="{% url 'carrito_actualizar' it.product.id %}" method="post" style="flex:1; display:flex; flex-direction:column; gap:6px;">
-              {% csrf_token %}
-              <input type="number" class="qty-input" name="qty" value="{{ it.qty }}" min="0">
-              <button type="submit" class="btn btn--primary" style="width:100%;">Actualizar</button>
-            </form>
-            <form action="{% url 'carrito_eliminar' it.product.id %}" method="post" style="flex:1; display:flex; align-items:flex-end;">
-              {% csrf_token %}
-              <button type="submit" class="btn-delete" style="width:100%; padding:10px; border-radius:12px;">Eliminar</button>
-            </form>
+          <div class="cart-item-actions">
+            <div class="qty-input-wrapper">
+              <input type="number" form="update-form-{{ it.product.id }}" class="qty-input" name="qty" value="{{ it.qty }}" min="0">
+            </div>
+            <div class="cart-btns-wrapper">
+              <form action="{% url 'carrito_actualizar' it.product.id %}" method="post" id="update-form-{{ it.product.id }}">
+                {% csrf_token %}
+                <button type="submit" class="btn-cart btn-actualizar">Actualizar</button>
+              </form>
+              <form action="{% url 'carrito_eliminar' it.product.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-cart btn-eliminar">Eliminar</button>
+              </form>
+            </div>
           </div>
         {% endif %}
       </div>
