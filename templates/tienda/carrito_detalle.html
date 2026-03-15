@@ -24,15 +24,15 @@
           <div class="cart-item-price">Subtotal: $ {{ it.subtotal }}</div>
         </div>
         {% if not request.user.is_staff and not request.user.is_superuser %}
-          <div class="cart-controls">
-            <form action="{% url 'carrito_actualizar' it.product.id %}" method="post">
+          <div class="cart-controls" style="display:flex; gap:8px; align-items:stretch;">
+            <form action="{% url 'carrito_actualizar' it.product.id %}" method="post" style="flex:1; display:flex; flex-direction:column; gap:6px;">
               {% csrf_token %}
               <input type="number" class="qty-input" name="qty" value="{{ it.qty }}" min="0">
-              <button type="submit" class="btn btn--primary">Actualizar</button>
+              <button type="submit" class="btn btn--primary" style="width:100%;">Actualizar</button>
             </form>
-            <form action="{% url 'carrito_eliminar' it.product.id %}" method="post">
+            <form action="{% url 'carrito_eliminar' it.product.id %}" method="post" style="flex:1; display:flex; align-items:flex-end;">
               {% csrf_token %}
-              <button type="submit" class="btn-delete">Eliminar</button> 
+              <button type="submit" class="btn-delete" style="width:100%; padding:10px; border-radius:12px;">Eliminar</button>
             </form>
           </div>
         {% endif %}
