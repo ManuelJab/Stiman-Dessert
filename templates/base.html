@@ -7,7 +7,7 @@
   <title>{% block title %}{{ project_name }}{% endblock %}</title>
   {% load static %}
   <link rel="icon" type="image/jpeg" href="{% static 'img/logo.jpg' %}">
-  <link rel="stylesheet" href="{% static 'css/stiman.css' %}?v=21">
+  <link rel="stylesheet" href="{% static 'css/stiman.css' %}?v=22">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
@@ -94,33 +94,84 @@
         padding: 5px 14px;
         border-radius: 25px;
         border: 2px solid rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+      .user-name-desktop:hover, .user-name-desktop.active {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: white;
       }
       .user-name-desktop i {
         font-size: 1.1rem;
       }
 
-      /* Logout button on desktop (PC) */
-      .btn-logout-desktop {
-        display: inline-flex !important;
+      /* Desktop User Dropdown Menu */
+      .desktop-user-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      .desktop-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        min-width: 200px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        z-index: 2000;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+      }
+      .desktop-dropdown-menu.show {
+        display: block;
+        animation: slideInDropdown 0.2s ease-out;
+      }
+      @keyframes slideInDropdown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .desktop-dropdown-item {
+        display: flex;
         align-items: center;
-        gap: 6px;
-        color: white;
-        background: rgba(220, 53, 69, 0.2);
-        border: 2px solid rgba(220, 53, 69, 0.5);
-        padding: 5px 14px;
-        border-radius: 25px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        gap: 10px;
+        padding: 12px 18px;
+        color: #333;
         text-decoration: none;
-        margin-right: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
         font-family: inherit;
       }
-      .btn-logout-desktop:hover {
-        background: #dc3545;
-        border-color: #dc3545;
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+      .desktop-dropdown-item:hover {
+        background: #fff0f3;
+        color: #e91e63;
+      }
+      .desktop-dropdown-item i {
+        font-size: 1.1rem;
+        color: #e91e63;
+      }
+      .desktop-dropdown-logout {
+        border-top: 1px solid #f0f0f0;
+        color: #dc3545;
+      }
+      .desktop-dropdown-logout:hover {
+        background: #fff5f5;
+        color: #c62828;
+      }
+      .desktop-dropdown-logout i {
+        color: #dc3545;
+      }
+
+      /* Hide the old PC logout button */
+      .btn-logout-desktop {
+        display: none !important;
       }
     }
 
@@ -464,16 +515,28 @@
           <span class="cart-count">{{ cart_count|default:0 }}</span>
         </a>
         {% if request.user.is_authenticated %}
-        <form action="{% url 'logout' %}" method="post" style="margin:0; display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="btn-logout-desktop"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
-        </form>
-        <span class="user-name-desktop"><i class="bi bi-person-circle"></i> {{ request.user.first_name|default:request.user.username }}</span>
+        <div class="desktop-user-dropdown" id="desktopUserDropdown">
+          <span class="user-name-desktop" id="desktopUserBtn">
+            <i class="bi bi-person-circle"></i> 
+            {{ request.user.first_name|default:request.user.username }}
+          </span>
+          <div class="desktop-dropdown-menu" id="desktopDropdownMenu">
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'dashboard' %}" class="desktop-dropdown-item">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            {% endif %}
+            <form action="{% url 'logout' %}" method="post" style="margin:0;">
+              {% csrf_token %}
+              <button type="submit" class="desktop-dropdown-item desktop-dropdown-logout">
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+              </button>
+            </form>
+          </div>
+        </div>
         <div class="nav-auth-actions">
           {% if request.user.is_staff or request.user.is_superuser %}
-          <a href="{% url 'dashboard' %}" class="nav-action-btn">
-            <i class="bi bi-speedometer2"></i> Dashboard
-          </a>
+          {# Dashboard button removed from here, now in dropdown #}
           {% endif %}
         </div>
         {% else %}
@@ -896,7 +959,7 @@
       });
     });
 
-    // User dropdown toggle
+    // User dropdown toggle (Mobile)
     const userDropdownBtn = document.getElementById('headerUserDropdownBtn');
     const userDropdownMenu = document.getElementById('headerUserDropdownMenu');
     if (userDropdownBtn && userDropdownMenu) {
@@ -904,10 +967,27 @@
         e.stopPropagation();
         userDropdownMenu.classList.toggle('open');
       });
-      document.addEventListener('click', () => {
-        userDropdownMenu.classList.remove('open');
+    }
+
+    // User dropdown toggle (Desktop/PC)
+    const desktopUserBtn = document.getElementById('desktopUserBtn');
+    const desktopDropdownMenu = document.getElementById('desktopDropdownMenu');
+    if (desktopUserBtn && desktopDropdownMenu) {
+      desktopUserBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        desktopDropdownMenu.classList.toggle('show');
+        desktopUserBtn.classList.toggle('active');
       });
     }
+
+    // Close all dropdowns on outside click
+    document.addEventListener('click', () => {
+      if (userDropdownMenu) userDropdownMenu.classList.remove('open');
+      if (desktopDropdownMenu) {
+        desktopDropdownMenu.classList.remove('show');
+        if (desktopUserBtn) desktopUserBtn.classList.remove('active');
+      }
+    });
   </script>
   {% if not request.user.is_authenticated %}
   <script>
