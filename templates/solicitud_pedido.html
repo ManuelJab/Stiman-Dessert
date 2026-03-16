@@ -5,6 +5,7 @@
 
 {% block extra_js %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Coordenadas iniciales (Since the user mentioned COP, let's use a central location in Colombia or Bogotá)
@@ -39,6 +40,23 @@
       lngInput.value = lng.toFixed(9);
     }
 
+    // Configurar el buscador (Geocodificador)
+    const geocoder = L.Control.geocoder({
+      defaultMarkGeocode: false,
+      placeholder: "Buscar dirección...",
+      errorMessage: "No se encontró la ubicación",
+      showUniqueResult: true
+    })
+    .on('markgeocode', function(e) {
+      const bbox = e.geocode.bbox;
+      const center = e.geocode.center;
+      
+      // Ajustar vista y marcador
+      map.fitBounds(bbox);
+      updateMarker(center.lat, center.lng);
+    })
+    .addTo(map);
+
     // Click en el mapa para poner el marcador
     map.on('click', function(e) {
       updateMarker(e.latlng.lat, e.latlng.lng);
@@ -62,6 +80,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 <style>
   /* Contenedor principal */
   body {
@@ -76,6 +95,25 @@
     border: 2px solid #ffe0ed;
     margin-top: 10px;
     z-index: 1;
+  }
+
+  /* Ajustes para el buscador del mapa (Geocoder) */
+  .leaflet-control-geocoder {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    border: 2px solid #ff4081 !important;
+  }
+  
+  .leaflet-control-geocoder-icon {
+    background-size: 20px 20px !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .leaflet-control-geocoder-form input {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.9rem !important;
+    padding: 8px !important;
   }
 
   .map-container {
