@@ -10,6 +10,13 @@
     <h1>Nuestro Catálogo de Postres</h1>
     <p><i class="bi bi-circle-fill"></i> Descubre Todos Nuestros Deliciosos Postres Artesanales <i
         class="bi bi-circle-fill"></i></p>
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <div style="margin-top: 25px;">
+      <a href="{% url 'producto_create' %}?next={{ request.path }}" class="btn btn--primary" style="padding: 12px 25px; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">
+        <i class="bi bi-plus-circle-fill"></i> Agregar más producto
+      </a>
+    </div>
+    {% endif %}
   </div>
 </section>
 
