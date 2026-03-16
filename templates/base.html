@@ -617,10 +617,6 @@
     </div>
   </footer>
   {% endif %}
-  <a href="{% url 'home' %}" class="back-to-home">
-    <i class="bi bi-house-fill"></i>
-    Volver al inicio
-  </a>
   <!-- Login Modal -->
   {% if not request.user.is_authenticated %}
   <div class="login-modal-overlay" id="loginModalOverlay">
