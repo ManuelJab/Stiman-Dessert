@@ -13,6 +13,7 @@ from django.core.paginator import Paginator
 from .models import Producto
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
+from django.core.mail import get_connection
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.core.mail import get_connection
@@ -641,8 +642,9 @@ def checkout(request):
 		# Aquí podrías registrar el pedido y limpiar el carrito
 		from web.models import SolicitudPedido
 		# Creamos una solicitud por cada item en el carrito
+		created_ids = []
 		for item in items:
-			SolicitudPedido.objects.create(
+			o = SolicitudPedido.objects.create(
 				name=request.user.get_full_name() or request.user.username,
 				email=request.user.email,
 				product=item['product'],
@@ -651,8 +653,36 @@ def checkout(request):
 				notes=f"Pago realizado via Checkout (Total: {total})",
 				status='recibido'
 			)
+			created_ids.append(o.pk)
 		request.session['cart'] = {}
 		request.session.modified = True
+		try:
+			host = os.environ.get('EMAIL_HOST') or getattr(settings, 'EMAIL_HOST', '')
+			user = os.environ.get('EMAIL_HOST_USER') or getattr(settings, 'EMAIL_HOST_USER', '')
+			password = os.environ.get('EMAIL_HOST_PASSWORD') or getattr(settings, 'EMAIL_HOST_PASSWORD', '')
+			try:
+				port = int(os.environ.get('EMAIL_PORT') or getattr(settings, 'EMAIL_PORT', 587))
+			except Exception:
+				port = 587
+			use_tls = (os.environ.get('EMAIL_USE_TLS') or str(getattr(settings, 'EMAIL_USE_TLS', True))).lower() in ('true', '1', 'yes')
+			use_ssl = (os.environ.get('EMAIL_USE_SSL') or str(getattr(settings, 'EMAIL_USE_SSL', False))).lower() in ('true', '1', 'yes')
+			smtp_ready = bool(host and user and password)
+			if smtp_ready:
+				conn = get_connection('django.core.mail.backends.smtp.EmailBackend',
+					host=host, port=port, username=user, password=password,
+					use_tls=use_tls, use_ssl=use_ssl)
+			else:
+				conn = get_connection('django.core.mail.backends.console.EmailBackend')
+			sender = getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@sweethouse.local')
+			lines = []
+			for item in items:
+				lines.append(f"- {item['product'].name} x{item['qty']}")
+			body = "Gracias por tu compra.\n\nDetalle del pedido:\n" + "\n".join(lines) + f"\n\nTotal: ${total:,.2f}\nID(s) de solicitud: {', '.join(str(x) for x in created_ids)}"
+			subject = "Confirmación de tu pedido"
+			if request.user.email:
+				EmailMessage(subject, body, sender, [request.user.email], connection=conn).send(fail_silently=True)
+		except Exception:
+			pass
 		return render(request, 'tienda/checkout_exito.html', {'total': total})
 	# Tomar Nequi del entorno si está disponible para reflejar cambios sin reiniciar
 	nequi_number = os.environ.get('NEQUI_NUMBER', getattr(settings, 'NEQUI_NUMBER', '3000000000'))
@@ -842,42 +872,38 @@ def solicitud_enviar_email(request, pk: int):
 		messages.error(request, "Debes escribir un mensaje.")
 		return redirect('solicitud_detail', pk=pk)
 	sender = getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@sweethouse.local')
-	backend = getattr(settings, 'EMAIL_BACKEND', '')
-	console_mode = 'console.EmailBackend' in (backend or '')
 	reply_to_email = (request.user.email or sender)
-	# Preparar conexión de correo: si el backend es consola pero hay credenciales SMTP, usar SMTP
-	smtp_ready = bool(getattr(settings, 'EMAIL_HOST', '') and getattr(settings, 'EMAIL_HOST_USER', '') and getattr(settings, 'EMAIL_HOST_PASSWORD', ''))
+	import os
+	host = os.environ.get('EMAIL_HOST') or getattr(settings, 'EMAIL_HOST', '')
+	user = os.environ.get('EMAIL_HOST_USER') or getattr(settings, 'EMAIL_HOST_USER', '')
+	password = os.environ.get('EMAIL_HOST_PASSWORD') or getattr(settings, 'EMAIL_HOST_PASSWORD', '')
 	try:
-		if console_mode and smtp_ready:
-			connection = get_connection(
-				'django.core.mail.backends.smtp.EmailBackend',
-				host=getattr(settings, 'EMAIL_HOST', ''),
-				port=getattr(settings, 'EMAIL_PORT', 587),
-				username=getattr(settings, 'EMAIL_HOST_USER', ''),
-				password=getattr(settings, 'EMAIL_HOST_PASSWORD', ''),
-				use_tls=getattr(settings, 'EMAIL_USE_TLS', True),
-				use_ssl=getattr(settings, 'EMAIL_USE_SSL', False),
-			)
-			console_mode = False  # for feedback purposes
-		else:
-			connection = get_connection(backend or 'django.core.mail.backends.console.EmailBackend')
+		port = int(os.environ.get('EMAIL_PORT') or getattr(settings, 'EMAIL_PORT', 587))
 	except Exception:
-		connection = get_connection(backend or 'django.core.mail.backends.console.EmailBackend')
+		port = 587
+	use_tls = (os.environ.get('EMAIL_USE_TLS') or str(getattr(settings, 'EMAIL_USE_TLS', True))).lower() in ('true', '1', 'yes')
+	use_ssl = (os.environ.get('EMAIL_USE_SSL') or str(getattr(settings, 'EMAIL_USE_SSL', False))).lower() in ('true', '1', 'yes')
+	smtp_ready = bool(host and user and password)
+	if smtp_ready:
+		connection = get_connection(
+			'django.core.mail.backends.smtp.EmailBackend',
+			host=host,
+			port=port,
+			username=user,
+			password=password,
+			use_tls=use_tls,
+			use_ssl=use_ssl,
+		)
+	else:
+		connection = get_connection('django.core.mail.backends.console.EmailBackend')
 	try:
 		msg = EmailMessage(subject, message, sender, [dest_email], reply_to=[reply_to_email], connection=connection)
 		msg.send(fail_silently=False)
-		if console_mode:
-			_preview = (message or '')[:240]
-			missing = []
-			if not getattr(settings, 'EMAIL_HOST', ''): missing.append('EMAIL_HOST')
-			if not getattr(settings, 'EMAIL_HOST_USER', ''): missing.append('EMAIL_HOST_USER')
-			if not getattr(settings, 'EMAIL_HOST_PASSWORD', ''): missing.append('EMAIL_HOST_PASSWORD')
-			msg_txt = f"Correo en modo consola. Para {dest_email} · Asunto: {subject}. Vista previa: {_preview}"
-			if missing:
-				msg_txt += f". Falta configurar: {', '.join(missing)} en .env"
-			messages.warning(request, msg_txt)
-		else:
+		if smtp_ready:
 			messages.success(request, f"Mensaje enviado a {dest_email}. Respuestas llegarán a {reply_to_email}.")
+		else:
+			_preview = (message or '')[:240]
+			messages.warning(request, f"Correo en modo consola. Para {dest_email}. Vista previa: {_preview}")
 	except Exception as e:
 		messages.error(request, f"No se pudo enviar el email: {e}")
 	return redirect('solicitud_detail', pk=pk)
