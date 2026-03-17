@@ -1,3 +1,4 @@
+django-import-export
 django
 dj-database-url
 whitenoise
