@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+{% block title %}Carrito{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/carrito.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<section class="cart-page">
+  <h1 class="cart-title">Carrito</h1>
+  
+  {% if items %}
+    <div class="cart-container">
+      <!-- Sección Principal (Izquierda) -->
+      <div class="cart-main-content">
+        <div class="cart-vendor-group">
+          <div class="vendor-header">
+            <input type="checkbox" checked id="select-all">
+            <label for="select-all" class="vendor-name">Productos de Sweet House</label>
+          </div>
+
+          <div class="cart-items-list">
+            {% for it in items %}
+              <div class="cart-item-row">
+                <div class="item-checkbox">
+                  <input type="checkbox" checked>
+                </div>
+                <div class="item-image-container">
+                  {% if it.product.image %}
+                    <img src="{{ it.product.image.url }}" alt="{{ it.product.name }}">
+                  {% else %}
+                    <img src="{% static 'img/cheesecake.jpeg' %}" alt="{{ it.product.name }}">
+                  {% endif %}
+                </div>
+                <div class="item-details">
+                  <a href="#" class="item-name">{{ it.product.name }}</a>
+                  <div class="qty-selector">
+                    <form action="{% url 'carrito_actualizar' it.product.id %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="qty" value="{{ it.qty|add:'-1' }}">
+                      <button type="submit" class="qty-btn" {% if it.qty <= 1 %}disabled{% endif %}>−</button>
+                    </form>
+                    <span class="qty-value">{{ it.qty }}</span>
+                    <form action="{% url 'carrito_actualizar' it.product.id %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="qty" value="{{ it.qty|add:'1' }}">
+                      <button type="submit" class="qty-btn">+</button>
+                    </form>
+                  </div>
+                </div>
+                <div class="item-actions">
+                  <form action="{% url 'carrito_eliminar' it.product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-delete-item" title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </div>
+                <div class="item-price-info">
+                  <span class="final-price">$ {{ it.subtotal|intcomma }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Sección de Envío (dentro del grupo del vendor) -->
+          <div class="shipping-info-box">
+            <div class="shipping-header">
+              <span class="shipping-title">Envío</span>
+              <span class="shipping-status">Gratis</span>
+            </div>
+            <div class="shipping-progress-container">
+              <div class="shipping-progress-bar" style="width: 100%;"></div>
+              <div class="shipping-progress-dot"></div>
+            </div>
+            <p class="shipping-text">¡Aprovecha el envío gratis por ser tu compra en Sweet House!</p>
+            <a href="{% url 'catalogo_publico' %}" class="shipping-link">Ver más productos ›</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Compra (Derecha) -->
+      <aside class="cart-summary-sidebar">
+        <h2 class="summary-title">Resumen de compra</h2>
+        
+        <div class="summary-detail-row">
+          <span>Producto</span>
+          <div class="prices">
+            <span>$ {{ total|intcomma }}</span>
+          </div>
+        </div>
+        
+        <div class="summary-detail-row">
+          <span>Envío</span>
+          <span class="free-text">Gratis</span>
+        </div>
+        
+        <div class="summary-total-row">
+          <span class="total-label">Total</span>
+          <span class="total-amount">$ {{ total|intcomma }}</span>
+        </div>
+        
+        <a href="/tienda/checkout/" class="btn-continue-checkout">Finalizar compra</a>
+      </aside>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">
+        <i class="bi bi-cart-x"></i>
+      </div>
+      <h2 class="empty-title">Tu carrito está vacío</h2>
+      <p class="empty-text">Agrega tus postres favoritos para proceder al pago.</p>
+      <div class="empty-actions">
+        <a class="empty-cta" href="{% url 'catalogo_publico' %}">Ver catálogo</a>
+        {% if not request.user.is_authenticated %}
+          <a class="empty-cta empty-cta--secondary" href="{% url 'login' %}">Ingresar</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+django
+dj-database-url
+whitenoise
+python-dotenv
+mysql-connector-python
+psycopg2-binary
+pillow
+django-import-export
+gunicorn
