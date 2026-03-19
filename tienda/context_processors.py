@@ -6,7 +6,8 @@ from .models import Producto
 from django.conf import settings
 
 
-from django.db import connection, ProgrammingError
+from django.db import connection
+from django.db.utils import ProgrammingError
 
 def cart_summary(request) -> Dict[str, object]:
     """Añade al contexto el número de ítems y el total del carrito."""
