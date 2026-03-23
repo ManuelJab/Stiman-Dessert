@@ -48,7 +48,6 @@ body {
 
 .site-footer .footer-grid {
   display: grid;
-<<<<<<< HEAD
   grid-template-columns: repeat(4, minmax(220px, 1fr));
   gap: 24px;
 }
