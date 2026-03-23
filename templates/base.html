@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ project_name }}{% endblock %}</title>
+  {% load static %}
+  <link rel="icon" type="image/jpeg" href="{% static 'img/logo.jpg' %}">
+  <link rel="stylesheet" href="{% static 'css/stiman.css' %}?v=22">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+  <style>
+    /* ═══ Header layout fixes ═══ */
+
+    /* Desktop: logo left, nav center, cart+auth right */
+    header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 0.7rem 2% !important; /* Move logo and right section closer to corners */
+    }
+
+    /* Desktop Logout Button (PC only) */
+    .btn-logout-desktop {
+      display: none; /* Hidden by default, shown on desktop only */
+    }
+
+    /* Left controls (mobile menu button) - hidden on desktop */
+    .header-left-controls {
+      display: none;
+      align-items: center;
+    }
+
+    /* Mobile top row inside nav (username + cart) - hidden on desktop */
+    .nav-mobile-top {
+      display: none;
+    }
+
+    /* Desktop specifics */
+    @media (min-width: 993px) {
+      .header-left-controls {
+        display: none !important;
+      }
+      .mobile-menu-btn {
+        display: none !important;
+      }
+      .nav-mobile-top {
+        display: none !important;
+      }
+      /* Hide mobile header controls on desktop */
+      .header-right-controls {
+        display: none !important;
+      }
+      .nav-user-info {
+        display: none !important;
+      }
+      .nav-user-section {
+        display: none !important;
+      }
+      .btn-login-mobile {
+        display: none !important;
+      }
+      /* Show desktop cart (next to username) */
+      .cart-desktop-only {
+        display: inline-flex !important;
+      }
+      /* Hide mobile cart on desktop */
+      .nav-mobile-cart {
+        display: none !important;
+      }
+      /* On desktop, nav-auth-actions should display inline */
+      .nav-auth-actions {
+        flex-direction: row !important;
+        width: auto !important;
+        gap: 8px !important;
+      }
+      .nav-action-btn {
+        width: auto !important;
+        padding: 6px 14px !important;
+        font-size: 0.85rem !important;
+        border-radius: 25px !important;
+      }
+      /* Desktop username next to cart */
+      .user-name-desktop {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 6px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 5px 14px;
+        border-radius: 25px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+      .user-name-desktop:hover, .user-name-desktop.active {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: white;
+      }
+      .user-name-desktop i {
+        font-size: 1.1rem;
+      }
+
+      /* Desktop User Dropdown Menu */
+      .desktop-user-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+      .desktop-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        min-width: 200px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        z-index: 2000;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+      }
+      .desktop-dropdown-menu.show {
+        display: block;
+        animation: slideInDropdown 0.2s ease-out;
+      }
+      @keyframes slideInDropdown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .desktop-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 18px;
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: background 0.2s;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .desktop-dropdown-item:hover {
+        background: #fff0f3;
+        color: #e91e63;
+      }
+      .desktop-dropdown-item i {
+        font-size: 1.1rem;
+        color: #e91e63;
+      }
+      .desktop-dropdown-logout {
+        border-top: 1px solid #f0f0f0;
+        color: #dc3545;
+      }
+      .desktop-dropdown-logout:hover {
+        background: #fff5f5;
+        color: #c62828;
+      }
+      .desktop-dropdown-logout i {
+        color: #dc3545;
+      }
+
+      /* Hide the old PC logout button */
+      .btn-logout-desktop {
+        display: none !important;
+      }
+    }
+
+    /* Mobile specifics */
+    @media (max-width: 992px) {
+      header {
+        padding: 0 15px !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+      }
+      /* Menu button on the LEFT */
+      .header-left-controls {
+        display: flex !important;
+        order: 1 !important;
+        align-items: center;
+      }
+      /* Logo center-left */
+      .logo {
+        order: 2 !important;
+        flex: 1 1 auto !important;
+      }
+      /* Cart + User on the RIGHT */
+      .header-right-controls {
+        display: flex !important;
+        order: 3 !important;
+        align-items: center;
+        gap: 8px;
+        z-index: 1002;
+        position: relative;
+      }
+      .header-right-controls .header-cart-link {
+        position: relative;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        border: none !important;
+        padding: 4px;
+        color: white;
+        font-size: 1.4rem;
+        text-decoration: none;
+      }
+      .header-user-icon {
+        background: white;
+        color: #333;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      }
+      .header-user-icon i:first-child {
+        color: #333;
+        font-size: 1.2rem;
+      }
+      .header-user-icon::after {
+        content: "\f282"; /* bootstrap-icons chevron-down */
+        font-family: "bootstrap-icons";
+        font-size: 0.8rem;
+        color: #888;
+      }
+      .header-user-icon.header-login-btn::after {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: block !important;
+      }
+      /* User dropdown menu */
+      .header-user-dropdown {
+        position: relative;
+        z-index: 1002;
+      }
+      .header-user-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        min-width: 180px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        overflow: hidden;
+        z-index: 2000;
+        border: none;
+        padding: 8px 0;
+      }
+      .header-user-dropdown-menu.open {
+        display: block;
+      }
+      .header-dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        color: #333;
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        background: none;
+        width: 100%;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+      .header-dropdown-item i {
+        font-size: 1.2rem;
+        color: #555;
+      }
+      .header-dropdown-item:hover {
+        background: #f8f9fa;
+      }
+      .header-dropdown-logout {
+        color: #8b1a1a;
+        margin-top: 5px;
+      }
+      .header-dropdown-logout i {
+        color: #8b1a1a;
+      }
+      .header-dropdown-logout:hover {
+        background: #fff5f5;
+      }
+      /* Hide desktop cart on mobile */
+      .cart-desktop-only {
+        display: none !important;
+      }
+      /* Hide desktop username on mobile */
+      .user-name-desktop {
+        display: none !important;
+      }
+      /* Nav panel - slide from left */
+      nav#mainNav {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease-in-out !important;
+      }
+      nav#mainNav.active {
+        transform: translateX(0) !important;
+      }
+      /* Mobile login button at top of nav */
+      .btn-login-mobile {
+        display: flex !important;
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        margin-left: 0 !important;
+        padding: 12px !important;
+        margin-bottom: 0.5rem;
+      }
+      /* Hide original login button in nav-right on mobile */
+      .nav-right .btn-login {
+        display: none !important;
+      }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    /* Background pattern for non-home pages */
+    body.has-bg-pattern main {
+      background-image: url("{% static 'img/dessert_pattern.jpg' %}");
+      background-repeat: repeat;
+      background-size: 400px;
+      background-attachment: fixed;
+      background-position: center;
+    }
+
+    .messages {
+      position: fixed;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 600px;
+      z-index: 3000;
+      pointer-events: none;
+    }
+
+    .message {
+      pointer-events: auto;
+      padding: 12px 20px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      animation: slideDown 0.4s ease-out forwards;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border-left: 5px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.success {
+      background: linear-gradient(135deg, #e3fcef 0%, #f0fdf4 100%);
+      color: #0a3622;
+      border-left-color: #10b981;
+    }
+
+    .message.error {
+      background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+      color: #991b1b;
+      border-left-color: #ef4444;
+    }
+
+    .message.warning {
+      background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+      color: #92400e;
+      border-left-color: #f59e0b;
+    }
+
+    .message.info {
+      background: linear-gradient(135deg, #dbeafe 0%, #f0f9ff 100%);
+      color: #0c2d48;
+      border-left-color: #3b82f6;
+    }
+
+    .back-to-home {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #ff4081, #e91e63);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 2px 10px rgba(255, 64, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .back-to-home:hover {
+      background: linear-gradient(135deg, #e91e63, #c2185b);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(255, 64, 129, 0.3);
+    }
+
+    .back-to-home i {
+      font-size: 1.2em;
+    }
+
+    @media (max-width: 768px) {
+      .back-to-home {
+        bottom: 20px;
+        top: auto;
+        right: 20px;
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        gap: 5px;
+        z-index: 900;
+        border-radius: 30px;
+      }
+      .back-to-home i {
+        font-size: 1.1em;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="{% block body_class %}has-bg-pattern{% endblock %}">
+  <header>
+    <!-- Mobile menu button (left side on mobile) -->
+    <div class="header-left-controls">
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+    <div class="logo">
+      <!-- Logo principal -->
+      <a href="{% url 'home' %}" style="text-decoration: none; display: flex; align-items: center; gap: 10px; color: inherit;">
+        <img src="{% static 'img/logo.jpg' %}" alt="{{ project_name }} Logo" class="cupcake-icon">
+        <span>{{ project_name }}</span>
+      </a>
+    </div>
+    <!-- Right controls: cart + user icon (always visible on mobile) -->
+    <div class="header-right-controls">
+      <a href="{% url 'carrito_detalle' %}" class="cart-link header-cart-link {% if request.resolver_match.url_name == 'carrito_detalle' %}active{% endif %}" aria-label="Carrito">
+        <i class="bi bi-cart3 cart-icon" aria-hidden="true"></i>
+        <span class="cart-count">{{ cart_count|default:0 }}</span>
+      </a>
+      {% if request.user.is_authenticated %}
+      <div class="header-user-dropdown">
+        <button type="button" class="header-user-icon" id="headerUserDropdownBtn" aria-label="Menú de usuario">
+          <i class="bi bi-person-circle"></i>
+          <span>{{ request.user.first_name|default:request.user.username }}</span>
+        </button>
+        <div class="header-user-dropdown-menu" id="headerUserDropdownMenu">
+          {% if not request.user.is_staff and not request.user.is_superuser %}
+          <a href="{% url 'pedidos_usuario' %}" class="header-dropdown-item">
+            <i class="bi bi-bag-check"></i>
+            <span>Mis Pedidos</span>
+          </a>
+          {% endif %}
+          {% if request.user.is_staff or request.user.is_superuser %}
+          <a href="{% url 'dashboard' %}" class="header-dropdown-item">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+          </a>
+          {% endif %}
+          <form action="{% url 'logout' %}" method="post" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="header-dropdown-item header-dropdown-logout">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Cerrar sesión</span>
+            </button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <button type="button" class="header-user-icon header-login-btn" id="openLoginModalHeader" title="Ingresar" aria-label="Ingresar" onclick="var o=document.getElementById('loginModalOverlay');if(o){o.classList.add('active');document.body.style.overflow='hidden';}">
+        <i class="bi bi-person-circle"></i>
+      </button>
+      {% endif %}
+    </div>
+    <nav id="mainNav">
+
+      <div class="nav-links">
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Inicio</a>
+        <a href="{% url 'catalogo_publico' %}" class="{% if request.resolver_match.url_name == 'catalogo_publico' %}active{% endif %}">Catálogo</a>
+        <a href="{% url 'favoritos_list' %}" class="{% if request.resolver_match.url_name == 'favoritos_list' %}active{% endif %}">Favoritos</a>
+        <a href="{% url 'contacto' %}" class="{% if request.resolver_match.url_name == 'contacto' %}active{% endif %}">Contacto</a>
+        <a href="{% url 'feedback' %}" class="{% if request.resolver_match.url_name == 'feedback' %}active{% endif %}">Comentarios</a>
+        <a href="{% url 'solicitud_pedido' %}" class="{% if request.resolver_match.url_name == 'solicitud_pedido' %}active{% endif %}">Pedidos</a>
+      </div>
+
+      <div class="nav-right">
+        <!-- Cart for desktop only (next to username) -->
+        <a href="{% url 'carrito_detalle' %}" class="cart-link cart-desktop-only {% if request.resolver_match.url_name == 'carrito_detalle' %}active{% endif %}" aria-label="Carrito">
+          <i class="bi bi-cart3 cart-icon" aria-hidden="true"></i>
+          <span class="cart-count">{{ cart_count|default:0 }}</span>
+        </a>
+        {% if request.user.is_authenticated %}
+        <div class="desktop-user-dropdown" id="desktopUserDropdown">
+          <span class="user-name-desktop" id="desktopUserBtn">
+            <i class="bi bi-person-circle"></i> 
+            {{ request.user.first_name|default:request.user.username }}
+          </span>
+          <div class="desktop-dropdown-menu" id="desktopDropdownMenu">
+            {% if not request.user.is_staff and not request.user.is_superuser %}
+            <a href="{% url 'pedidos_usuario' %}" class="desktop-dropdown-item">
+              <i class="bi bi-bag-check"></i> Mis Pedidos
+            </a>
+            {% endif %}
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'dashboard' %}" class="desktop-dropdown-item">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            {% endif %}
+            <form action="{% url 'logout' %}" method="post" style="margin:0;">
+              {% csrf_token %}
+              <button type="submit" class="desktop-dropdown-item desktop-dropdown-logout">
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="nav-auth-actions">
+          {% if request.user.is_staff or request.user.is_superuser %}
+          {# Dashboard button removed from here, now in dropdown #}
+          {% endif %}
+        </div>
+        {% else %}
+        <button type="button" class="btn-login" id="openLoginModal"><i class="bi bi-box-arrow-in-right"></i> Ingresar</button>
+        {% endif %}
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  {% if request.resolver_match.url_name == 'home' %}
+  <footer class="banner-footer">
+    <div class="footer-banner-container">
+      <!-- Main Content Area -->
+      <div class="footer-banner-content">
+        <!-- Logo and Slogan -->
+        <div class="footer-section-brand">
+          <div class="footer-logo-container">
+            <img src="{% static 'img/logo.jpg' %}" alt="Logo Sweet House" class="footer-main-logo">
+            <h3 class="footer-brand-name">Sweet House</h3>
+          </div>
+          <p class="footer-slogan">DELICIOSOS POSTRES ARTESANALES</p>
+          <p class="footer-love">Amor en cada bocado ♡</p>
+        </div>
+
+        <!-- Vertical Divider -->
+        <div class="footer-divider"></div>
+
+        <!-- Navigation Section -->
+        <div class="footer-section">
+          <h4 class="footer-section-title nav-title">NAVEGACIÓN</h4>
+          <ul class="footer-list-new">
+            <li><a href="{% url 'catalogo_publico' %}"><i class="bi bi-shop"></i> Catálogo</a></li>
+            <li><a href="{% url 'solicitud_pedido' %}"><i class="bi bi-bag-heart"></i> Pedidos</a></li>
+            <li><a href="{% url 'feedback' %}"><i class="bi bi-chat-heart"></i> Comentarios</a></li>
+          </ul>
+        </div>
+
+        <!-- Vertical Divider -->
+        <div class="footer-divider"></div>
+
+        <!-- Hours Section -->
+        <div class="footer-section">
+          <h4 class="footer-section-title hours-title">HORARIOS</h4>
+          <div class="footer-hours-content">
+            <p><i class="bi bi-clock-history"></i> <strong>Lunes a Domingo</strong></p>
+            <p class="hours-time">8:00 AM - 8:00 PM</p>
+            <div class="domicilios-tag">
+              <i class="bi bi-truck"></i> Domicilios disponibles
+            </div>
+          </div>
+        </div>
+
+        <!-- Vertical Divider -->
+        <div class="footer-divider"></div>
+
+        <!-- Contact Section -->
+        <div class="footer-section">
+          <h4 class="footer-section-title contact-title">CONTACTO</h4>
+          <ul class="footer-list-new contact-info">
+            <li><a href="https://wa.me/573000000000"><i class="bi bi-whatsapp"></i> +57 300 000 0000</a></li>
+            <li><a href="mailto:{{ support_email }}"><i class="bi bi-envelope-at"></i> {{ support_email }}</a></li>
+            <li><span><i class="bi bi-geo-alt-fill"></i> Cartagena, Colombia</span></li>
+          </ul>
+          <div class="footer-social-new">
+            <span class="siguenos-text">+ SÍGUENOS</span>
+            <div class="social-icons-new">
+              <a href="#" class="social-icon-ig"><i class="bi bi-instagram"></i></a>
+              <a href="#" class="social-icon-fb"><i class="bi bi-facebook"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Strip -->
+    <div class="footer-bottom-strip">
+      <p>© 2026 Sweet House · Todos los derechos reservados ♡</p>
+    </div>
+  </footer>
+  {% endif %}
+  <!-- Login Modal -->
+  {% if not request.user.is_authenticated %}
+  <div class="login-modal-overlay" id="loginModalOverlay">
+    <div class="login-modal">
+      <button class="login-modal-close" id="closeLoginModal" aria-label="Cerrar">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      <div class="login-modal-header">
+        <div class="login-modal-icon">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <h2>Ingresar</h2>
+        <p>Accede a tu cuenta en {{ project_name }}</p>
+      </div>
+      <div class="login-modal-body">
+        <form method="post" id="loginModalForm" novalidate>
+          {% csrf_token %}
+          <div class="login-modal-error" id="loginModalError" style="display:none;"></div>
+          <div class="login-modal-field">
+            <label for="modal_username"><i class="bi bi-person"></i> Nombre de usuario</label>
+            <input type="text" id="modal_username" name="username" placeholder="Tu nombre de usuario" maxlength="30" required autocomplete="username">
+          </div>
+          <div class="login-modal-field">
+            <label for="modal_password"><i class="bi bi-lock"></i> Contraseña</label>
+            <div class="password-wrapper">
+              <input type="password" id="modal_password" name="password" placeholder="Tu contraseña" required autocomplete="current-password">
+              <button type="button" class="toggle-password" id="togglePassword" aria-label="Mostrar contraseña">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <div style="text-align: right; margin-top: 5px;">
+              <a href="{% url 'password_reset' %}" style="color: #e91e63; font-size: 0.85rem; text-decoration: none; font-weight: 500;">¿Olvidaste tu contraseña?</a>
+            </div>
+          </div>
+          <button type="submit" class="login-modal-btn" id="loginModalBtn">
+            <span class="btn-text">Entrar</span>
+            <span class="btn-loader" style="display:none;"><i class="bi bi-arrow-repeat spin"></i></span>
+          </button>
+        </form>
+      </div>
+      <div class="login-modal-footer">
+        <p>¿No tienes cuenta? <a href="{% url 'signup' %}">Regístrate aquí</a></p>
+      </div>
+    </div>
+  </div>
+  <style>
+    /* Login Modal Styles */
+    .login-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+      padding: 20px;
+    }
+    .login-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .login-modal {
+      background: #fff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 25px 60px rgba(233, 30, 99, 0.25), 0 10px 30px rgba(0, 0, 0, 0.12);
+      transform: translateY(30px) scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+      position: relative;
+    }
+    .login-modal-overlay.active .login-modal {
+      transform: translateY(0) scale(1);
+    }
+    .login-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255, 255, 255, 0.25);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      z-index: 2;
+      font-size: 16px;
+    }
+    .login-modal-close:hover {
+      background: rgba(255, 255, 255, 0.4);
+      transform: rotate(90deg);
+    }
+    .login-modal-header {
+      background: linear-gradient(135deg, #ff4081, #e91e63, #c2185b);
+      color: #fff;
+      padding: 32px 28px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .login-modal-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: modalShimmer 3s ease-in-out infinite;
+    }
+    @keyframes modalShimmer {
+      0%, 100% { transform: translate(-20%, -20%); }
+      50% { transform: translate(20%, 20%); }
+    }
+    .login-modal-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      font-size: 28px;
+    }
+    .login-modal-header h2 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      font-weight: 700;
+      position: relative;
+    }
+    .login-modal-header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+      position: relative;
+    }
+    .login-modal-body {
+      padding: 28px;
+    }
+    .login-modal-error {
+      background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+      border-left: 4px solid #ef4444;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      color: #991b1b;
+      font-weight: 500;
+      font-size: 13px;
+      animation: shakeError 0.4s ease-in-out;
+    }
+    @keyframes shakeError {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    .login-modal-field {
+      margin-bottom: 18px;
+    }
+    .login-modal-field label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 600;
+      color: #333;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .login-modal-field label i {
+      margin-right: 5px;
+      color: #e91e63;
+    }
+    .login-modal-field input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: #fafafa;
+      box-sizing: border-box;
+    }
+    .login-modal-field input:focus {
+      outline: none;
+      border-color: #ff6ea6;
+      box-shadow: 0 0 0 4px rgba(255, 110, 166, 0.12);
+      background: #fff;
+    }
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper input {
+      padding-right: 48px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .toggle-password:hover {
+      color: #e91e63;
+    }
+    .login-modal-btn {
+      width: 100%;
+      background: #e91e63;
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .login-modal-btn:hover {
+      background: #c2185b;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+    }
+    .login-modal-footer {
+      padding: 20px 28px;
+      background: #fdf2f5;
+      text-align: center;
+      border-top: 1px solid #fce4ec;
+    }
+    .login-modal-footer p {
+      margin: 0;
+      color: #666;
+      font-size: 14px;
+    }
+    .login-modal-footer a {
+      color: #e91e63;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .login-modal-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Header Navigation spacing */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 25px !important;
+      flex: 1;
+      justify-content: center;
+    }
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: white;
+      transform: translateY(-2px);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: white;
+      transition: width 0.3s ease;
+    }
+    .nav-links a:hover::after, .nav-links a.active::after {
+      width: 100%;
+    }
+    
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper input {
+      padding-right: 48px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .toggle-password:hover {
+      color: #e91e63;
+    }
+    .login-modal-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #ff4081, #e91e63);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 20px;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .login-modal-btn:hover {
+      background: linear-gradient(135deg, #e91e63, #c2185b);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(233, 30, 99, 0.35);
+    }
+    .login-modal-btn:active {
+      transform: translateY(0);
+    }
+    .login-modal-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spin {
+      display: inline-block;
+      animation: spin 0.8s linear infinite;
+    }
+    .login-modal-footer {
+      text-align: center;
+      padding: 18px 28px;
+      border-top: 1px solid #f5e0e9;
+      background: #fdf5f8;
+    }
+    .login-modal-footer p {
+      margin: 0;
+      color: #777;
+      font-size: 14px;
+    }
+    .login-modal-footer a {
+      color: #e91e63;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .login-modal-footer a:hover {
+      color: #c2185b;
+      text-decoration: underline;
+    }
+    @media (max-width: 480px) {
+      .login-modal {
+        border-radius: 16px;
+        max-width: 100%;
+      }
+      .login-modal-header {
+        padding: 24px 20px 20px;
+      }
+      .login-modal-body {
+        padding: 20px;
+      }
+      .login-modal-header h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+  {% endif %}
+  {% block extra_js %}{% endblock %}
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mainNav = document.getElementById('mainNav');
+    
+    if (mobileMenuBtn && mainNav) {
+      mobileMenuBtn.addEventListener('click', () => {
+        mainNav.classList.toggle('active');
+        const icon = mobileMenuBtn.querySelector('i');
+        if (mainNav.classList.contains('active')) {
+          icon.classList.replace('bi-list', 'bi-x');
+        } else {
+          icon.classList.replace('bi-x', 'bi-list');
+        }
+      });
+    }
+
+    // Auto-hide messages
+    document.addEventListener('DOMContentLoaded', () => {
+      const messages = document.querySelectorAll('.message');
+      messages.forEach(msg => {
+        setTimeout(() => {
+          msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          msg.style.opacity = '0';
+          msg.style.transform = 'translateY(-20px)';
+          setTimeout(() => msg.remove(), 500);
+        }, 4000);
+      });
+    });
+
+    // User dropdown toggle (Mobile)
+    const userDropdownBtn = document.getElementById('headerUserDropdownBtn');
+    const userDropdownMenu = document.getElementById('headerUserDropdownMenu');
+    if (userDropdownBtn && userDropdownMenu) {
+      userDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        userDropdownMenu.classList.toggle('open');
+      });
+    }
+
+    // User dropdown toggle (Desktop/PC)
+    const desktopUserBtn = document.getElementById('desktopUserBtn');
+    const desktopDropdownMenu = document.getElementById('desktopDropdownMenu');
+    if (desktopUserBtn && desktopDropdownMenu) {
+      desktopUserBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        desktopDropdownMenu.classList.toggle('show');
+        desktopUserBtn.classList.toggle('active');
+      });
+    }
+
+    // Close all dropdowns on outside click
+    document.addEventListener('click', () => {
+      if (userDropdownMenu) userDropdownMenu.classList.remove('open');
+      if (desktopDropdownMenu) {
+        desktopDropdownMenu.classList.remove('show');
+        if (desktopUserBtn) desktopUserBtn.classList.remove('active');
+      }
+    });
+  </script>
+  {% if not request.user.is_authenticated %}
+  <script>
+    // Login Modal Logic
+    (function() {
+      const overlay = document.getElementById('loginModalOverlay');
+      const openBtn = document.getElementById('openLoginModal');
+      const openBtnHeader = document.getElementById('openLoginModalHeader');
+      const closeBtn = document.getElementById('closeLoginModal');
+      const form = document.getElementById('loginModalForm');
+      const errorDiv = document.getElementById('loginModalError');
+      const submitBtn = document.getElementById('loginModalBtn');
+      const btnText = submitBtn ? submitBtn.querySelector('.btn-text') : null;
+      const btnLoader = submitBtn ? submitBtn.querySelector('.btn-loader') : null;
+      const togglePwd = document.getElementById('togglePassword');
+      const pwdInput = document.getElementById('modal_password');
+
+      if (!overlay || (!openBtn && !openBtnHeader)) return;
+
+      function openModal() {
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => {
+          const firstInput = document.getElementById('modal_username');
+          if (firstInput) firstInput.focus();
+        }, 400);
+      }
+
+      function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        if (errorDiv) { errorDiv.style.display = 'none'; errorDiv.textContent = ''; }
+        if (form) form.reset();
+      }
+
+      if (openBtn) openBtn.addEventListener('click', openModal);
+      if (openBtnHeader) openBtnHeader.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+
+      // Close on overlay click
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+      });
+
+      // Toggle password visibility
+      if (togglePwd && pwdInput) {
+        togglePwd.addEventListener('click', () => {
+          const isPassword = pwdInput.type === 'password';
+          pwdInput.type = isPassword ? 'text' : 'password';
+          togglePwd.querySelector('i').classList.toggle('bi-eye');
+          togglePwd.querySelector('i').classList.toggle('bi-eye-slash');
+        });
+      }
+
+      // AJAX Login Submit
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (submitBtn.disabled) return;
+
+          // Show loading
+          submitBtn.disabled = true;
+          if (btnText) btnText.style.display = 'none';
+          if (btnLoader) btnLoader.style.display = 'inline-block';
+          if (errorDiv) { errorDiv.style.display = 'none'; }
+
+          try {
+            const formData = new FormData(form);
+                  const csrfInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                  const csrfToken = csrfInput ? csrfInput.value : (document.cookie.match(/csrftoken=([^;]+)/) || [])[1];
+            const response = await fetch('{% url "ajax_login" %}', {
+              method: 'POST',
+              body: formData,
+              headers: {
+                      'X-Requested-With': 'XMLHttpRequest',
+                      ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {})
+                    },
+                    credentials: 'same-origin'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+              // Redirect to appropriate page
+              window.location.href = data.redirect_url || '/';
+            } else {
+              // Show error
+              if (errorDiv) {
+                errorDiv.textContent = data.error || 'Usuario o contraseña incorrectos.';
+                errorDiv.style.display = 'block';
+              }
+              submitBtn.disabled = false;
+              if (btnText) btnText.style.display = 'inline';
+              if (btnLoader) btnLoader.style.display = 'none';
+            }
+          } catch (err) {
+            if (errorDiv) {
+                    errorDiv.textContent = 'Error de conexión o seguridad (CSRF). Recarga la página e intenta de nuevo.';
+              errorDiv.style.display = 'block';
+            }
+            submitBtn.disabled = false;
+            if (btnText) btnText.style.display = 'inline';
+            if (btnLoader) btnLoader.style.display = 'none';
+          }
+        });
+      }
+    })();
+  </script>
+  {% endif %}
+  <script src="{% static 'js/chatbot.js' %}"></script>
+</body>
+</html>
