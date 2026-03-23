@@ -20,62 +20,73 @@
       display: flex !important;
       justify-content: space-between !important;
       align-items: center !important;
-      padding: 0 20px !important;
-      background-color: #e91e63 !important; /* Intense Pink from Image */
-      height: 70px !important;
+      padding: 0 25px !important;
+      background-color: #e91e63 !important; /* Intense Pink */
+      height: 80px !important;
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 2000;
-      box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
 
-    /* Left: Menu & Logo */
+    /* Left Area: Menu & Logo */
     .header-left-area {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 20px;
     }
 
     .mobile-menu-btn {
       background: none;
       border: none;
       color: white;
-      font-size: 2.2rem;
+      font-size: 2.5rem; /* Larger icon like image */
       cursor: pointer;
-      padding: 5px;
+      padding: 0;
       display: flex;
       align-items: center;
-      transition: opacity 0.2s;
+      transition: transform 0.2s;
     }
     
     .mobile-menu-btn:hover {
-      opacity: 0.8;
+      transform: scale(1.1);
     }
 
-    .cupcake-icon-mobile {
-      width: 38px;
-      height: 38px;
+    .logo-circle {
+      width: 50px;
+      height: 50px;
+      background: white;
       border-radius: 50%;
-      border: 2px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid white;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .cupcake-icon-header {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
 
-    /* Navigation Panel (Sidebar for both PC and Mobile) */
+    /* Navigation Panel (Sidebar) */
     .nav-links {
       position: fixed;
       top: 0;
       left: 0;
-      width: 280px;
+      width: 300px;
       height: 100vh;
       background: #e91e63;
       flex-direction: column;
-      padding: 80px 25px 25px;
+      padding: 100px 30px 30px;
       transform: translateX(-100%);
       transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1999;
-      box-shadow: 5px 0 25px rgba(0,0,0,0.2);
+      box-shadow: 10px 0 30px rgba(0,0,0,0.3);
       display: flex;
       gap: 15px;
     }
@@ -87,11 +98,11 @@
     .nav-links a {
       color: white;
       text-decoration: none;
-      font-weight: 600;
-      font-size: 1.1rem;
-      padding: 12px 20px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 30px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 15px 25px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 40px;
       transition: all 0.3s ease;
       text-align: center;
     }
@@ -100,57 +111,26 @@
       background: white;
       color: #e91e63 !important;
       border-color: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     
     .nav-links a:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.1);
       border-color: white;
     }
 
-    /* Right: Cart & User */
+    /* Right Area: Profile & Cart */
     .header-right-area {
       display: flex;
       align-items: center;
-      gap: 20px;
-    }
-
-    .cart-mobile-link {
-      position: relative;
-      color: white;
-      font-size: 1.8rem;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-    }
-
-    .cart-badge {
-      position: absolute;
-      top: -6px;
-      right: -10px;
-      background: white;
-      color: #e91e63;
-      font-size: 0.8rem;
-      font-weight: 800;
-      min-width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1.5px solid #e91e63;
-      padding: 2px;
-    }
-
-    /* User Profile Icon (Circle person like image) */
-    .user-profile-container {
-      position: relative;
+      gap: 25px;
     }
 
     .user-profile-btn {
       background: none;
       border: none;
       color: white;
-      font-size: 2.2rem;
+      font-size: 2.8rem; /* Larger icon like image */
       cursor: pointer;
       padding: 0;
       display: flex;
@@ -159,19 +139,47 @@
     }
     
     .user-profile-btn:hover {
-      transform: scale(1.05);
+      transform: scale(1.1);
+    }
+
+    .cart-mobile-link {
+      position: relative;
+      color: white;
+      font-size: 2.4rem; /* Larger icon like image */
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -4px;
+      right: -10px;
+      background: white;
+      color: #e91e63;
+      font-size: 0.85rem;
+      font-weight: 900;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #e91e63;
+      padding: 2px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
 
     /* User Dropdown Menu */
     .user-profile-dropdown {
       display: none;
       position: absolute;
-      top: calc(100% + 15px);
+      top: calc(100% + 20px);
       right: 0;
-      min-width: 200px;
+      min-width: 220px;
       background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
       z-index: 2100;
       overflow: hidden;
       border: 1px solid #f0f0f0;
@@ -387,24 +395,20 @@
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <header>
-    <!-- Left: Menu Button & Logo -->
+    <!-- Left Area: Menu Button & Logo -->
     <div class="header-left-area">
       <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
         <i class="bi bi-list"></i>
       </button>
       <a href="{% url 'home' %}" class="logo-link">
-        <img src="{% static 'img/logo.jpg' %}" alt="Sweet House Logo" class="cupcake-icon-mobile">
+        <div class="logo-circle">
+          <img src="{% static 'img/logo.jpg' %}" alt="Sweet House Logo" class="cupcake-icon-header">
+        </div>
       </a>
     </div>
 
-    <!-- Right: Cart & User Profile -->
+    <!-- Right Area: Profile & Cart -->
     <div class="header-right-area">
-      <!-- Cart -->
-      <a href="{% url 'carrito_detalle' %}" class="cart-mobile-link" aria-label="Ver carrito">
-        <i class="bi bi-cart3"></i>
-        <span class="cart-badge">{{ cart_count|default:0 }}</span>
-      </a>
-
       <!-- User Profile -->
       <div class="header-auth-container">
         {% if request.user.is_authenticated %}
@@ -437,6 +441,12 @@
         </button>
         {% endif %}
       </div>
+
+      <!-- Cart -->
+      <a href="{% url 'carrito_detalle' %}" class="cart-mobile-link" aria-label="Ver carrito">
+        <i class="bi bi-cart3"></i>
+        <span class="cart-badge">{{ cart_count|default:0 }}</span>
+      </a>
     </div>
   </header>
 
