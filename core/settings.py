@@ -140,15 +140,15 @@ except ValueError:
 NEQUI_NUMBER = os.environ.get('NEQUI_NUMBER', '3000000000')
 
 # ============================
-# Email configuration
+# Email configuration (Brevo API)
 # ============================
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "TU_API_KEY")
+# El backend de SMTP sigue configurado por si alguna librería interna lo necesita,
+# pero se recomienda usar core.utils.enviar_correo para la API.
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
 EMAIL_HOST = "smtp-relay.brevo.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
 EMAIL_HOST_USER = "manuelarrietabarreto20@gmail.com"
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-
 DEFAULT_FROM_EMAIL = "Sweet-House <manuelarrietabarreto20@gmail.com>"
