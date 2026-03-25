@@ -694,18 +694,16 @@ def checkout(request):
 			sender = f"Sweet House <{os.environ.get('EMAIL_HOST_USER', 'pintamarcos35@gmail.com')}>"
 			subject = "Confirmación de tu pedido"
 			
-			# Cuerpo en texto plano
-			lines = [f"- {item['product'].name} x{item['qty']}" for item in items]
-			body = "Gracias por tu compra.\n\nDetalle del pedido:\n" + "\n".join(lines)
-			body += f"\n\nTotal: ${total:,.2f}"
-			body += f"\nID(s) de solicitud: {', '.join(str(x) for x in created_ids)}"
+			# Cuerpo del mensaje EXACTAMENTE como en la imagen
+			items_text = "\n".join([f"- {item['product'].name} x{item['qty']}" for item in items])
+			body = f"Gracias por tu compra.\n\nDetalle del pedido:\n{items_text}\n\nTotal: ${total:,.2f}\nID(s) de solicitud: {', '.join(str(x) for x in created_ids)}"
 			
 			recipient_email = request.user.email
 			if recipient_email:
-				# El AsyncEmailBackend en settings.py se encarga de que sea asíncrono
+				# El AsyncEmailBackend lo enviará en segundo plano
 				EmailMessage(subject, body, sender, [recipient_email]).send(fail_silently=False)
 				
-				# Copia al administrador
+				# Copia al administrador (Stiven)
 				admin_email = os.environ.get('EMAIL_HOST_USER', 'pintamarcos35@gmail.com')
 				if admin_email != recipient_email:
 					EmailMessage(f"NUEVO PEDIDO #{created_ids[0]}", body, sender, [admin_email]).send(fail_silently=True)

@@ -22,11 +22,14 @@ class AsyncEmailBackend(EmailBackend):
 
     def _send_messages_sync(self, email_messages):
         try:
-            # Importante: Cada hilo debe manejar su propia conexión SMTP
-            # super().send_messages ya se encarga de abrir y cerrar la conexión.
+            # Aseguramos que la conexión se abra y cierre explícitamente en el hilo
+            self.open()
             sent_count = super().send_messages(email_messages)
+            self.close()
+            
             if sent_count:
-                print(f"✅ [AsyncEmail] {sent_count} correos enviados.")
+                print(f"✅ [AsyncEmail] {sent_count} correos enviados exitosamente.")
         except Exception as e:
-            print(f"❌ [AsyncEmail Error] Fallo: {str(e)}")
-            logger.error(f"Error enviando correo asíncrono: {e}", exc_info=True)
+            # Imprimir el error para que sea visible en los logs del servidor
+            print(f"❌ [AsyncEmail Error] Fallo al enviar emails: {str(e)}")
+            logger.error(f"Error en AsyncEmailBackend: {e}", exc_info=True)
