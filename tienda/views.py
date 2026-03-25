@@ -26,18 +26,7 @@ from decimal import Decimal, ROUND_HALF_UP
 import os
 from dotenv import load_dotenv
 from django.http import JsonResponse
-import threading
-
-def send_async_email(subject, body, sender, recipient_list, connection_params):
-	"""Función para enviar correos de forma asíncrona en un hilo separado."""
-	try:
-		from django.core.mail import EmailMessage, get_connection
-		conn = get_connection(**connection_params)
-		msg = EmailMessage(subject, body, sender, recipient_list, connection=conn)
-		msg.send(fail_silently=False)
-		print(f"✅ Email enviado exitosamente a: {recipient_list}")
-	except Exception as e:
-		print(f"❌ Error enviando email asíncrono: {str(e)}")
+from django.core.mail import EmailMessage
 
 def inicio(request):
 	return render(request, 'tienda/inicio.html')
@@ -429,34 +418,15 @@ def signup(request):
 				first_name = user.first_name if user.first_name else user.username
 				messages.success(request, f'¡Registro exitoso! Tu cuenta ha sido creada. Por favor, inicia sesión con tus credenciales.')
 				
-				# Notificar al admin sobre el nuevo registro de forma asíncrona
+				# Notificar al admin sobre el nuevo registro (automáticamente asíncrono)
 				try:
-					host = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 					email_user = os.environ.get('EMAIL_HOST_USER', 'pintamarcos35@gmail.com')
-					password = os.environ.get('EMAIL_HOST_PASSWORD', 'enheskaqbmdokuhk')
-					port = int(os.environ.get('EMAIL_PORT', 465))
-					use_ssl = os.environ.get('EMAIL_USE_SSL', 'True').lower() in ('true', '1', 'yes')
-					
-					connection_params = {
-						'backend': 'django.core.mail.backends.smtp.EmailBackend',
-						'host': host,
-						'port': port,
-						'username': email_user,
-						'password': password,
-						'use_ssl': use_ssl,
-						'use_tls': not use_ssl
-					}
-					
-					threading.Thread(
-						target=send_async_email,
-						args=(
-							f"NUEVO USUARIO: {user.username}",
-							f"Se ha registrado un nuevo usuario.\n\nNombre: {first_name}\nEmail: {user.email}\nUsuario: {user.username}",
-							f"Sweet House <{email_user}>",
-							[email_user],
-							connection_params
-						)
-					).start()
+					EmailMessage(
+						f"NUEVO USUARIO: {user.username}",
+						f"Se ha registrado un nuevo usuario.\n\nNombre: {first_name}\nEmail: {user.email}\nUsuario: {user.username}",
+						f"Sweet House <{email_user}>",
+						[email_user]
+					).send(fail_silently=True)
 				except Exception:
 					pass
 
@@ -721,54 +691,21 @@ def checkout(request):
 		load_dotenv()
 		
 		try:
-			# Usar la configuración de Gmail directamente para asegurar el envío
-			host = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-			user = os.environ.get('EMAIL_HOST_USER', 'pintamarcos35@gmail.com')
-			password = os.environ.get('EMAIL_HOST_PASSWORD', 'enheskaqbmdokuhk')
-			port = int(os.environ.get('EMAIL_PORT', 465))
-			use_ssl = os.environ.get('EMAIL_USE_SSL', 'True').lower() in ('true', '1', 'yes')
-			
-			connection_params = {
-				'backend': 'django.core.mail.backends.smtp.EmailBackend',
-				'host': host,
-				'port': port,
-				'username': user,
-				'password': password,
-				'use_ssl': use_ssl,
-				'use_tls': not use_ssl
-			}
-			
-			sender = f"Sweet House <{user}>"
+			sender = f"Sweet House <{os.environ.get('EMAIL_HOST_USER', 'pintamarcos35@gmail.com')}>"
 			subject = "Confirmación de tu pedido"
 			
-			# Cuerpo en texto plano exactamente como en la imagen
-			lines = []
-			for item in items:
-				lines.append(f"- {item['product'].name} x{item['qty']}")
-			
-			body = "Gracias por tu compra.\n\n"
-			body += "Detalle del pedido:\n"
-			body += "\n".join(lines)
+			# Cuerpo en texto plano
+			lines = [f"- {item['product'].name} x{item['qty']}" for item in items]
+			body = "Gracias por tu compra.\n\nDetalle del pedido:\n" + "\n".join(lines)
 			body += f"\n\nTotal: ${total:,.2f}"
 			body += f"\nID(s) de solicitud: {', '.join(str(x) for x in created_ids)}"
 			
-			# Obtener el email del usuario logueado
 			recipient_email = request.user.email
-			
 			if recipient_email:
-				# Enviamos el mensaje en un hilo separado para no bloquear el renderizado
-				# 1. Al cliente
-				threading.Thread(
-					target=send_async_email,
-					args=(subject, body, sender, [recipient_email], connection_params)
-				).start()
-				
-				# 2. Notificar al admin (Stiven)
-				if user != recipient_email:
-					threading.Thread(
-						target=send_async_email,
-						args=(f"NUEVO PEDIDO #{created_ids[0]}", body, sender, [user], connection_params)
-					).start()
+				# Ahora enviamos de forma normal y el AsyncEmailBackend se encarga del resto
+				EmailMessage(subject, body, sender, [recipient_email]).send(fail_silently=False)
+				# Copia al administrador
+				EmailMessage(f"NUEVO PEDIDO #{created_ids[0]}", body, sender, [os.environ.get('EMAIL_HOST_USER', 'pintamarcos35@gmail.com')]).send(fail_silently=True)
 			else:
 				print("⚠️ El usuario no tiene un email registrado.")
 					
@@ -974,26 +911,11 @@ def solicitud_enviar_email(request, pk: int):
 		port = 587
 	use_tls = (os.environ.get('EMAIL_USE_TLS') or str(getattr(settings, 'EMAIL_USE_TLS', True))).lower() in ('true', '1', 'yes')
 	use_ssl = (os.environ.get('EMAIL_USE_SSL') or str(getattr(settings, 'EMAIL_USE_SSL', False))).lower() in ('true', '1', 'yes')
-	smtp_ready = bool(host and user and password)
-	
-	connection_params = {
-		'backend': 'django.core.mail.backends.smtp.EmailBackend',
-		'host': host,
-		'port': port,
-		'username': user,
-		'password': password,
-		'use_tls': use_tls,
-		'use_ssl': use_ssl,
-	}
-
 	if smtp_ready:
-		# Enviamos el mensaje en un hilo separado para no bloquear la interfaz del administrador
-		threading.Thread(
-			target=send_async_email,
-			args=(subject, message, sender, [dest_email], connection_params)
-		).start()
+		EmailMessage(subject, message, sender, [dest_email], reply_to=[reply_to_email]).send(fail_silently=False)
 		messages.success(request, f"Mensaje enviado a {dest_email}. Respuestas llegarán a {reply_to_email}.")
 	else:
+		from django.core.mail import get_connection
 		connection = get_connection('django.core.mail.backends.console.EmailBackend')
 		try:
 			msg = EmailMessage(subject, message, sender, [dest_email], reply_to=[reply_to_email], connection=connection)
