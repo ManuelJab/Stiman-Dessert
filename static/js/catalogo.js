@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         btn.style.background = "linear-gradient(135deg, #ff4081, #e91e63)"
         btn.textContent = "Agregar al Carrito"
-      }, 1000)
+      }, 500)
     })
   })
 
@@ -561,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (hoverTimer) clearTimeout(hoverTimer);
       hoverTimer = setTimeout(() => {
         showIngredientsInsideCard(card);
-      }, 3000); // 3 segundos
+      }, 500); // 0.5 segundos
     };
 
     // Al salir, cancelamos el contador y ocultamos
