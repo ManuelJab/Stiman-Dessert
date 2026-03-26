@@ -1490,7 +1490,7 @@ body {
 }
 
 /* Footer */
-footer {
+footer.legacy-footer {
   background: linear-gradient(135deg, #ff4081, #e91e63);
   color: white;
   text-align: center;
