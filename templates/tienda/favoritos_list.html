@@ -47,7 +47,10 @@
           <p class="precio">${{ p.price }}</p>
           {% if request.user.is_authenticated and not request.user.is_staff and not request.user.is_superuser %}
             <div style="margin-bottom:8px;">
-              <a href="{% url 'favoritos_toggle' p.id %}" class="btn btn--secondary">❌ Quitar</a>
+              <form action="{% url 'favoritos_toggle' p.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn--secondary">❌ Quitar</button>
+              </form>
             </div>
             <form action="{% url 'carrito_agregar' p.id %}" method="post" style="display:inline;">
               {% csrf_token %}

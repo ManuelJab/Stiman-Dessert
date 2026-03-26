@@ -749,8 +749,10 @@ def _get_favorites(session):
 		session['favorites'] = list(favs)
 	return set(session.get('favorites', []))
 
+@require_POST
+@login_required
 def favoritos_toggle(request, pk: int):
-	if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
+	if request.user.is_staff or request.user.is_superuser:
 		messages.info(request, 'Los administradores no pueden gestionar favoritos.')
 		return redirect(request.META.get('HTTP_REFERER', 'catalogo_publico'))
 	product = get_object_or_404(Producto, pk=pk, is_active=True)
@@ -764,7 +766,11 @@ def favoritos_toggle(request, pk: int):
 	request.session.modified = True
 	return redirect(request.META.get('HTTP_REFERER', 'catalogo_publico'))
 
+@login_required
 def favoritos_list(request):
+	if request.user.is_staff or request.user.is_superuser:
+		messages.info(request, 'Los administradores no pueden gestionar favoritos.')
+		return redirect('dashboard')
 	favs = _get_favorites(request.session)
 	ids = [int(x) for x in favs]
 	productos = Producto.objects.filter(id__in=ids, is_active=True).order_by('name')
