@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 
 
     'import_export',
+    'anymail',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -194,18 +195,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 
-# Email configuration
-# Usamos el motor asíncrono robusto para eliminar retrasos de carga
-EMAIL_BACKEND = 'tienda.email_backend.AsyncEmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-# El puerto 465 con SSL es el más fiable para Gmail en servidores como Render
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'pintamarcos35@gmail.com')
-# IMPORTANTE: Asegúrate de que esta 'Contraseña de aplicación' esté activa en Google
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'enheskaqbmdokuhk')
-DEFAULT_FROM_EMAIL = f"Sweet House <{EMAIL_HOST_USER}>"
+# Email configuration (Brevo / Sendinblue)
+EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
+ANYMAIL = {
+    "SENDINBLUE_API_KEY": os.environ.get('BREVO_API_KEY'),
+}
+DEFAULT_FROM_EMAIL = "dessert <ztigreh123@gmail.com>"
 PROJECT_NAME = os.environ.get('PROJECT_NAME', 'Sweet House')
 
 # SMTP configuration (Gmail example commented)
