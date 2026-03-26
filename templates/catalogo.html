@@ -133,7 +133,7 @@
                 <button type="submit" class="btn btn--secondary" aria-label="Agregar a favoritos"><i class="bi bi-heart-fill"></i> Favorito</button>
               </form>
             {% else %}
-              <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn--secondary" aria-label="Iniciar sesión para usar favoritos"><i class="bi bi-heart-fill"></i> Inicia sesión</a>
+              <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}" class="btn btn--secondary" aria-label="Iniciar sesión para usar favoritos"><i class="bi bi-heart-fill"></i> Favorito</a>
             {% endif %}
           </div>
           <form action="{% url 'carrito_agregar' p.id %}" method="post">
