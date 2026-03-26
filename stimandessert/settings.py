@@ -48,7 +48,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 ).split(',')
 
 # Only set this header if we are actually behind a proxy that handles SSL
-# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # Application definition
