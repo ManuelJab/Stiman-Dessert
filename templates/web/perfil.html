@@ -24,8 +24,61 @@
       <label style="display:block; font-weight: 600; color: #555; margin-bottom: 5px;">Apellido</label>
       <input type="text" name="last_name" value="{{ request.user.last_name }}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
     </div>
+    
+    <div style="margin-bottom: 25px;">
+      <label style="display:block; font-weight: 600; color: #555; margin-bottom: 5px;">Teléfono celular (opcional)</label>
+      <input type="text" name="phone" value="{{ profile.phone }}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;" placeholder="Ej: 555-1234">
+    </div>
 
-    <button type="submit" style="background: linear-gradient(135deg, #ff4081, #e91e63); color: white; border: none; padding: 12px 20px; border-radius: 999px; font-weight: bold; cursor: pointer; width: 100%;"><i class="bi bi-save"></i> Guardar Cambios</button>
+    <button type="submit" style="background: linear-gradient(135deg, #ff4081, #e91e63); color: white; border: none; padding: 12px 20px; border-radius: 999px; font-weight: bold; cursor: pointer; width: 100%;"><i class="bi bi-person-check-fill"></i> Guardar Datos Personales</button>
+  </form>
+
+  <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 30px;">
+  
+  <h3 style="color: #444; margin-bottom: 15px; font-size: 1.2rem;"><i class="bi bi-envelope"></i> Cambiar Correo Electrónico</h3>
+  {% if not show_verify %}
+  <form method="post" style="margin-bottom: 40px; background: #fafafa; padding: 20px; border-radius: 12px; border: 1px solid #ddd;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="request_email_code">
+    <div style="margin-bottom: 15px;">
+      <label style="display:block; font-weight: 600; color: #555; margin-bottom: 5px;">Nuevo correo electrónico</label>
+      <input type="email" name="new_email" placeholder="ejemplo@nuevo.com" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+    </div>
+    <button type="submit" style="background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%;">Enviar código de verificación</button>
+  </form>
+  {% else %}
+  <form method="post" style="margin-bottom: 40px; background: #e3f2fd; padding: 20px; border-radius: 12px; border: 1px solid #90caf9;">
+    {% csrf_token %}
+    <p style="color: #1565c0; font-size: 0.95rem; margin-top:0;">Hemos enviado un código secreto de 6 dígitos al correo: <b>{{ new_email_pending }}</b>.</p>
+    <p style="color: #555; font-size: 0.85rem; margin-bottom: 15px;">Abre tu bandeja de entrada e ingrésalo aquí abajo para confirmar que el correo es tuyo.</p>
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+      <input type="hidden" name="action" value="verify_email_code">
+      <input type="text" name="code" placeholder="123456" required autofocus style="flex:1; padding: 10px; border-radius: 8px; border: 1px solid #90caf9; font-size:1.2rem; text-align:center; letter-spacing: 5px; font-weight: bold;">
+    </div>
+    <div style="display:flex; gap: 10px;">
+      <button type="submit" style="flex:1; background: #1976d2; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">Verificar código y Guardar</button>
+      <button type="button" onclick="document.getElementById('cancelEmailForm').submit();" style="background: white; color: #1976d2; border: 1px solid #1976d2; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">Cancelar</button>
+    </div>
+  </form>
+  <form id="cancelEmailForm" method="post" style="display:none;">{% csrf_token %}<input type="hidden" name="action" value="cancel_email"></form>
+  {% endif %}
+
+  <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 30px;">
+  
+  <h3 style="color: #444; margin-bottom: 15px; font-size: 1.2rem;"><i class="bi bi-shield-lock"></i> Contraseña</h3>
+  <form method="post" style="margin-bottom: 40px; background: #fafafa; padding: 20px; border-radius: 12px; border: 1px solid #ddd;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="update_password">
+    <div style="margin-bottom: 15px;">
+      <label style="display:block; font-weight: 600; color: #555; margin-bottom: 5px;">Contraseña actual</label>
+      <input type="password" name="old_password" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+    </div>
+    <div style="margin-bottom: 15px;">
+      <label style="display:block; font-weight: 600; color: #555; margin-bottom: 5px;">Nueva contraseña</label>
+      <input type="password" name="new_password" minlength="4" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+      <small style="color: #999;">Tu sesión no se cerrará al guardar la nueva contraseña.</small>
+    </div>
+    <button type="submit" style="background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%;"><i class="bi bi-key-fill"></i> Actualizar Contraseña</button>
   </form>
 
   <hr style="border: none; border-top: 1px solid #eee; margin-bottom: 30px;">

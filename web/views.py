@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
+import random
 import logging
 
 logger = logging.getLogger(__name__)
@@ -275,27 +276,108 @@ def dashboard(request):
 
 @login_required
 def perfil_usuario(request):
+    from .models import UserProfile
+    from django.contrib.auth.models import User
+    
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    
     if request.method == 'POST':
         action = request.POST.get('action')
         
         if action == 'update':
             first_name = request.POST.get('first_name', '').strip()
             last_name = request.POST.get('last_name', '').strip()
+            phone = request.POST.get('phone', '').strip()
             
             # Save data
             request.user.first_name = first_name
             request.user.last_name = last_name
             request.user.save()
             
+            profile.phone = phone
+            profile.save()
+            
             messages.success(request, 'Tus datos han sido actualizados exitosamente.')
+            return redirect('perfil')
+            
+        elif action == 'update_password':
+            old_pass = request.POST.get('old_password')
+            new_pass = request.POST.get('new_password')
+            
+            if request.user.check_password(old_pass):
+                request.user.set_password(new_pass)
+                request.user.save()
+                update_session_auth_hash(request, request.user)
+                messages.success(request, 'Contraseña actualizada correctamente.')
+            else:
+                messages.error(request, 'La contraseña actual es incorrecta.')
+            return redirect('perfil')
+            
+        elif action == 'request_email_code':
+            new_email = request.POST.get('new_email', '').strip().lower()
+            if User.objects.filter(email__iexact=new_email).exists():
+                messages.error(request, 'Este correo ya está en uso por otra persona.')
+                return redirect('perfil')
+            
+            code = str(random.randint(100000, 999999))
+            request.session['email_change_code'] = code
+            request.session['email_change_new'] = new_email
+            
+            try:
+                send_mail(
+                    'Código de verificación - Sweet House',
+                    f'Tu código secreto para verificar el cambio de correo es: {code}\n\nSi no solicitaste este cambio, ignora este correo de inmediato.',
+                    getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@sweethouse.com'),
+                    [new_email],
+                    fail_silently=False
+                )
+                messages.info(request, f'Te hemos enviado un código a {new_email}. Ingrésalo abajo.')
+                request.session['show_verify_email'] = True
+            except Exception:
+                logger.exception("Error enviando codigo confirmacion correo")
+                messages.error(request, 'No pudimos enviar el correo. Verifica que esté bien escrito o intenta más tarde.')
+            return redirect('perfil')
+            
+        elif action == 'verify_email_code':
+            code_input = request.POST.get('code', '').strip()
+            saved_code = request.session.get('email_change_code')
+            new_email = request.session.get('email_change_new')
+            
+            if code_input and saved_code and code_input == saved_code:
+                request.user.email = new_email
+                if getattr(request.user, 'USERNAME_FIELD', 'username') == 'email' or User.objects.filter(username=new_email).count() == 0:
+                    request.user.username = new_email
+                request.user.save()
+                
+                del request.session['email_change_code']
+                del request.session['email_change_new']
+                request.session['show_verify_email'] = False
+                
+                messages.success(request, 'Tu correo electrónico fue actualizado con éxito.')
+            else:
+                messages.error(request, 'Código incorrecto o vencido.')
+                request.session['show_verify_email'] = True
+            return redirect('perfil')
+            
+        elif action == 'cancel_email':
+            if 'email_change_code' in request.session:
+                del request.session['email_change_code']
+            if 'email_change_new' in request.session:
+                del request.session['email_change_new']
+            request.session['show_verify_email'] = False
+            messages.info(request, 'Cambio de correo cancelado.')
             return redirect('perfil')
             
         elif action == 'delete':
             user = request.user
             logout(request)
             user.delete()
-            # It's good practice to add a success message after logout, but it uses session, 
-            # so we just redirect. 
             return redirect('home')
             
-    return render(request, 'web/perfil.html')
+    show_verify = request.session.pop('show_verify_email', False)
+    new_email_pending = request.session.get('email_change_new', '')
+    return render(request, 'web/perfil.html', {
+        'profile': profile,
+        'show_verify': show_verify,
+        'new_email_pending': new_email_pending
+    })
