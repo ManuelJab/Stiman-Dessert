@@ -10,9 +10,9 @@
     <input type="hidden" name="action" value="update">
     
     <div style="margin-bottom: 15px;">
-      <label style="display:block; font-weight: 600; color: #555; margin-bottom: 5px;">Correo Electrónico (Usuario)</label>
+      <label style="display:block; font-weight: 600; color: #555; margin-bottom: 5px;">Correo actual</label>
       <input type="email" value="{{ request.user.email }}" disabled style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: #f9f9f9; color: #888; cursor: not-allowed;">
-      <small style="color: #999;">El correo no puede ser modificado ya que es vital para ingresar a tu cuenta.</small>
+      <small style="color: #999;">Para cambiarlo, ingresa abajo tu nuevo correo y verifica con el código que te enviaremos.</small>
     </div>
 
     <div style="margin-bottom: 15px;">
@@ -57,8 +57,14 @@
     </div>
     <div style="display:flex; gap: 10px;">
       <button type="submit" style="flex:1; background: #1976d2; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">Verificar código y Guardar</button>
-      <button type="button" onclick="document.getElementById('cancelEmailForm').submit();" style="background: white; color: #1976d2; border: 1px solid #1976d2; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">Cancelar</button>
+      <button type="button" onclick="document.getElementById('resendEmailForm').submit();" style="background: #fff; color: #1976d2; border: 1px solid #1976d2; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">Reenviar código</button>
+      <button type="button" onclick="document.getElementById('cancelEmailForm').submit();" style="background: #fff; color: #d32f2f; border: 1px solid #d32f2f; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">Cancelar</button>
     </div>
+  </form>
+  <form id="resendEmailForm" method="post" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="request_email_code">
+    <input type="hidden" name="new_email" value="{{ new_email_pending }}">
   </form>
   <form id="cancelEmailForm" method="post" style="display:none;">{% csrf_token %}<input type="hidden" name="action" value="cancel_email"></form>
   {% endif %}

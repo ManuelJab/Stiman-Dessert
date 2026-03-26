@@ -315,6 +315,12 @@ def perfil_usuario(request):
             
         elif action == 'request_email_code':
             new_email = request.POST.get('new_email', '').strip().lower()
+            if not new_email:
+                messages.error(request, 'Debes ingresar un correo nuevo.')
+                return redirect('perfil')
+            if new_email == (request.user.email or '').lower():
+                messages.error(request, 'El nuevo correo no puede ser igual al actual.')
+                return redirect('perfil')
             if User.objects.filter(email__iexact=new_email).exists():
                 messages.error(request, 'Este correo ya está en uso por otra persona.')
                 return redirect('perfil')
